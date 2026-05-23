@@ -1,11 +1,11 @@
-// src/pages/pharmacy/Pharmacy.jsx
 import { useEffect, useState, useMemo } from 'react';
 import api from '../../api';
 import { PharmacyTable } from './components/PharmacyTable';
 import { DeleteConfirmModal } from '../../components/DeleteConfirmModal';
 import { SearchInput } from '../../components/SearchInput';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
-import { TablePagination } from '../../components/TablePagination'; // adjust path
+import { TablePagination } from '../../components/TablePagination';
+import Toast from '../../components/Toast';
 
 export default function Pharmacy() {
   const [pharmacies, setPharmacies] = useState([]);
@@ -13,11 +13,18 @@ export default function Pharmacy() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
-
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [perPage] = useState(2);
+
+  const [toast, setToast] = useState({
+    show: false,
+    message: '',
+    type: 'success',
+  });
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+  };
 
   const fetchPharmacies = async (page = 1) => {
     setLoading(true);
@@ -25,13 +32,12 @@ export default function Pharmacy() {
       const res = await api.get('/pharmacies', {
         params: { page, per_page: perPage },
       });
-
       setPharmacies(res.data.data);
       setCurrentPage(res.data.current_page);
       setTotalPages(res.data.last_page);
     } catch (error) {
       console.error('Error fetching pharmacies:', error);
-      alert('Failed to load pharmacies');
+      showToast('Failed to load pharmacies', 'error');
     } finally {
       setLoading(false);
     }
@@ -41,7 +47,6 @@ export default function Pharmacy() {
     fetchPharmacies(currentPage);
   }, [currentPage]);
 
-  // Filter pharmacies by name or owner (client-side filtering on current page data)
   const filteredPharmacies = useMemo(() => {
     if (!searchTerm.trim()) return pharmacies;
     const term = searchTerm.toLowerCase();
@@ -61,10 +66,11 @@ export default function Pharmacy() {
     ) {
       try {
         await api.put(`/pharmacies/${pharmacy.id}`, { status: newStatus });
-        fetchPharmacies(currentPage); // refresh current page
+        showToast(`Pharmacy ${action}ed successfully!`, 'success');
+        fetchPharmacies(currentPage);
       } catch (error) {
         console.error('Error updating status:', error);
-        alert('Failed to update pharmacy status');
+        showToast('Failed to update pharmacy status', 'error');
       }
     }
   };
@@ -78,9 +84,9 @@ export default function Pharmacy() {
     if (!deleteTarget) return;
     try {
       await api.delete(`/pharmacies/${deleteTarget.id}`);
+      showToast('Pharmacy deleted successfully!', 'success');
       setShowDeleteConfirm(false);
       setDeleteTarget(null);
-      // If current page becomes empty after deletion, go to previous page
       if (pharmacies.length === 1 && currentPage > 1) {
         setCurrentPage(currentPage - 1);
       } else {
@@ -88,7 +94,7 @@ export default function Pharmacy() {
       }
     } catch (error) {
       console.error('Error deleting pharmacy:', error);
-      alert('Failed to delete pharmacy');
+      showToast('Failed to delete pharmacy', 'error');
     }
   };
 
@@ -149,6 +155,16 @@ export default function Pharmacy() {
         onConfirm={handleDeleteConfirm}
         itemName={deleteTarget?.name}
       />
+
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() =>
+            setToast({ show: false, message: '', type: 'success' })
+          }
+        />
+      )}
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { SearchInput } from '../../components/SearchInput';
 import { TablePagination } from '../../components/TablePagination';
 import { SupplierForm } from './components/SupplierForm';
+import Toast from '../../components/Toast';
 
 export default function Suppliers() {
   const [suppliers, setSuppliers] = useState([]);
@@ -20,6 +21,16 @@ export default function Suppliers() {
   const [editingSupplier, setEditingSupplier] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
   const navigate = useNavigate();
+
+  // Toast state
+  const [toast, setToast] = useState({
+    show: false,
+    message: '',
+    type: 'success',
+  });
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+  };
 
   const itemsPerPage = 3;
 
@@ -42,6 +53,7 @@ export default function Suppliers() {
       setBalances(balObj);
     } catch (error) {
       console.error(error);
+      showToast('Failed to load suppliers.', 'error');
     } finally {
       setLoading(false);
     }
@@ -50,10 +62,11 @@ export default function Suppliers() {
   const handleDelete = async () => {
     try {
       await api.delete(`/suppliers/${deleteId}`);
+      showToast('Supplier deleted successfully!', 'success');
       setDeleteId(null);
       fetchSuppliers();
     } catch (error) {
-      console.error(error);
+      showToast('Failed to delete supplier.', 'error');
     }
   };
 
@@ -122,7 +135,6 @@ export default function Suppliers() {
           </div>
         ) : (
           <>
-            {/* Horizontal scroll wrapper */}
             <div className='overflow-x-auto -mx-4 sm:mx-0'>
               <div className='inline-block min-w-full align-middle'>
                 <table className='min-w-[640px] sm:min-w-full divide-y divide-gray-200'>
@@ -223,6 +235,12 @@ export default function Suppliers() {
             onSuccess={() => {
               setShowForm(false);
               fetchSuppliers();
+              showToast(
+                editingSupplier
+                  ? 'Supplier updated successfully!'
+                  : 'Supplier created successfully!',
+                'success',
+              );
             }}
             onCancel={() => setShowForm(false)}
           />
@@ -236,6 +254,17 @@ export default function Suppliers() {
         onConfirm={handleDelete}
         itemName={`supplier "${suppliers.find((s) => s.id === deleteId)?.name}"`}
       />
+
+      {/* Toast Notifications */}
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() =>
+            setToast({ show: false, message: '', type: 'success' })
+          }
+        />
+      )}
     </div>
   );
 }

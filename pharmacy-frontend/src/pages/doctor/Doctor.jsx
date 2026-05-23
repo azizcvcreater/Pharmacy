@@ -9,6 +9,7 @@ import { TablePagination } from '../../components/TablePagination';
 import { DeleteConfirmModal } from '../../components/DeleteConfirmModal';
 import { DoctorTable } from './components/DoctorTable';
 import { DoctorForm } from './components/DoctorForm';
+import Toast from '../../components/Toast';
 
 export default function Doctor() {
   const [doctors, setDoctors] = useState([]);
@@ -21,6 +22,10 @@ export default function Doctor() {
   const [deleteId, setDeleteId] = useState(null);
   const [editId, setEditId] = useState(null);
 
+  // Validation errors
+  const [createErrors, setCreateErrors] = useState({});
+  const [editErrors, setEditErrors] = useState({});
+
   // Pagination
   const [perPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -29,14 +34,24 @@ export default function Doctor() {
   // Search
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Form state for create/edit
+  // Toast state
+  const [toast, setToast] = useState({
+    show: false,
+    message: '',
+    type: 'success',
+  });
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+  };
+
+  // Form state
   const [formData, setFormData] = useState({
     fees: '',
     description: '',
   });
-  const [extraFees, setExtraFees] = useState([]); // { type, amount }
+  const [extraFees, setExtraFees] = useState([]);
 
-  // Lock body scroll when any modal is open
+  // Lock body scroll
   useEffect(() => {
     if (showCreate || showEdit || showDeleteConfirm) {
       document.body.style.overflow = 'hidden';
@@ -61,24 +76,23 @@ export default function Doctor() {
       setTotalPages(res.data.last_page || 1);
     } catch (error) {
       console.error(error);
+      showToast('Failed to load doctors.', 'error');
     } finally {
       setLoading(false);
     }
   };
 
-  // Reset form (used before opening modal)
   const resetForm = () => {
     setFormData({ fees: '', description: '' });
     setExtraFees([]);
   };
 
-  // Open create modal
   const handleCreateClick = () => {
     resetForm();
+    setCreateErrors({});
     setShowCreate(true);
   };
 
-  // Open edit modal
   const handleEditClick = async (id) => {
     try {
       const res = await api.get(`/doctors/${id}`);
@@ -88,25 +102,22 @@ export default function Doctor() {
         fees: data.fees,
         description: data.description || '',
       });
-      // Build extraFees array from existing data
       const extra = [];
-      if (data.sonography_fee && data.sonography_fee > 0) {
+      if (data.sonography_fee && data.sonography_fee > 0)
         extra.push({ type: 'sonography', amount: data.sonography_fee });
-      }
-      if (data.ecg_fee && data.ecg_fee > 0) {
+      if (data.ecg_fee && data.ecg_fee > 0)
         extra.push({ type: 'ecg', amount: data.ecg_fee });
-      }
-      if (data.xray_fee && data.xray_fee > 0) {
+      if (data.xray_fee && data.xray_fee > 0)
         extra.push({ type: 'xray', amount: data.xray_fee });
-      }
       setExtraFees(extra);
+      setEditErrors({});
       setShowEdit(true);
     } catch (error) {
       console.error(error);
+      showToast('Failed to load doctor data.', 'error');
     }
   };
 
-  // Create submit
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -123,14 +134,20 @@ export default function Doctor() {
         if (fee.type === 'xray') payload.xray_fee = fee.amount || 0;
       });
       await api.post('/doctors', payload);
+      showToast('Doctor fees added successfully!', 'success');
       setShowCreate(false);
+      setCreateErrors({});
       fetchDoctors(currentPage);
     } catch (error) {
-      alert(error.response?.data?.message || 'Error saving doctor fees');
+      if (error.response?.status === 422) {
+        setCreateErrors(error.response.data.errors);
+      } else {
+        const msg = error.response?.data?.message || 'Error saving doctor fees';
+        showToast(msg, 'error');
+      }
     }
   };
 
-  // Edit submit
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -147,14 +164,21 @@ export default function Doctor() {
         if (fee.type === 'xray') payload.xray_fee = fee.amount || 0;
       });
       await api.put(`/doctors/${editId}`, payload);
+      showToast('Doctor fees updated successfully!', 'success');
       setShowEdit(false);
+      setEditErrors({});
       fetchDoctors(currentPage);
     } catch (error) {
-      alert(error.response?.data?.message || 'Error updating doctor fees');
+      if (error.response?.status === 422) {
+        setEditErrors(error.response.data.errors);
+      } else {
+        const msg =
+          error.response?.data?.message || 'Error updating doctor fees';
+        showToast(msg, 'error');
+      }
     }
   };
 
-  // Delete
   const handleDeleteClick = (id) => {
     setDeleteId(id);
     setShowDeleteConfirm(true);
@@ -163,24 +187,25 @@ export default function Doctor() {
   const confirmDelete = async () => {
     try {
       await api.delete(`/doctors/${deleteId}`);
+      showToast('Doctor fees deleted successfully!', 'success');
       setShowDeleteConfirm(false);
       setDeleteId(null);
       fetchDoctors(currentPage);
     } catch (error) {
-      alert('Delete failed');
+      showToast('Delete failed. Please try again.', 'error');
     }
   };
 
-  // Close modals
   const closeModals = () => {
     setShowCreate(false);
     setShowEdit(false);
     setShowDeleteConfirm(false);
     setDeleteId(null);
+    setCreateErrors({});
+    setEditErrors({});
     resetForm();
   };
 
-  // Pagination handlers
   const handlePrev = () => {
     if (currentPage > 1) setCurrentPage((prev) => prev - 1);
   };
@@ -189,7 +214,6 @@ export default function Doctor() {
     if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
   };
 
-  // Search filter (local)
   const filteredDoctors = useMemo(() => {
     if (!searchTerm.trim()) return doctors;
     const lowerSearch = searchTerm.toLowerCase();
@@ -210,7 +234,6 @@ export default function Doctor() {
 
   return (
     <div className='space-y-6'>
-      {/* Header */}
       <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between'>
         <h1 className='text-2xl font-semibold text-gray-800'>Doctor fees</h1>
         <button
@@ -222,7 +245,6 @@ export default function Doctor() {
         </button>
       </div>
 
-      {/* Search */}
       <div className='flex justify-end'>
         <SearchInput
           value={searchTerm}
@@ -231,7 +253,6 @@ export default function Doctor() {
         />
       </div>
 
-      {/* Table Card */}
       <div className='rounded-xl border border-gray-100 bg-white p-6 shadow-sm'>
         {loading ? (
           <LoadingSpinner />
@@ -258,7 +279,6 @@ export default function Doctor() {
         )}
       </div>
 
-      {/* Create Modal */}
       {showCreate && (
         <Modal title='Add Doctor Fees' onClose={closeModals} size='max-w-3xl'>
           <DoctorForm
@@ -269,11 +289,12 @@ export default function Doctor() {
             onSubmit={handleCreateSubmit}
             submitLabel='Save Doctor Fees'
             onCancel={closeModals}
+            errors={createErrors}
+            clearErrors={() => setCreateErrors({})}
           />
         </Modal>
       )}
 
-      {/* Edit Modal */}
       {showEdit && (
         <Modal title='Edit Doctor Fees' onClose={closeModals} size='max-w-3xl'>
           <DoctorForm
@@ -284,17 +305,28 @@ export default function Doctor() {
             onSubmit={handleEditSubmit}
             submitLabel='Update Doctor Fees'
             onCancel={closeModals}
+            errors={editErrors}
+            clearErrors={() => setEditErrors({})}
           />
         </Modal>
       )}
 
-      {/* Delete Confirmation */}
       <DeleteConfirmModal
         isOpen={showDeleteConfirm}
         onClose={closeModals}
         onConfirm={confirmDelete}
         itemName={`doctor fees #${deleteId}`}
       />
+
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() =>
+            setToast({ show: false, message: '', type: 'success' })
+          }
+        />
+      )}
     </div>
   );
 }

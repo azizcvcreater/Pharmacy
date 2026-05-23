@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState, useMemo } from 'react';
 import { FiPlus } from 'react-icons/fi';
 import api from '../../api';
@@ -8,23 +9,29 @@ import { Modal } from '../../components/Modal';
 import { TablePagination } from '../../components/TablePagination';
 import { SearchInput } from '../../components/SearchInput';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
+import Toast from '../../components/Toast';
 
 export default function User() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // Search & Pagination
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage] = useState(3);
   const [totalPages, setTotalPages] = useState(1);
-
-  // Modal states
   const [showCreate, setShowCreate] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
+
+  const [toast, setToast] = useState({
+    show: false,
+    message: '',
+    type: 'success',
+  });
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+  };
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -33,7 +40,7 @@ export default function User() {
       setUsers(res.data.data || res.data);
     } catch (error) {
       console.error('Error fetching users:', error);
-      alert('Failed to load users');
+      showToast('Failed to load users', 'error');
     } finally {
       setLoading(false);
     }
@@ -43,18 +50,17 @@ export default function User() {
     fetchUsers();
   }, []);
 
-  // Filter users
   const filteredUsers = useMemo(() => {
-    if (!searchTerm.trim()) return users;
+    const staffOnly = users.filter((user) => user.role === 'staff');
+    if (!searchTerm.trim()) return staffOnly;
     const term = searchTerm.toLowerCase();
-    return users.filter(
+    return staffOnly.filter(
       (user) =>
         user.name.toLowerCase().includes(term) ||
         user.email.toLowerCase().includes(term),
     );
   }, [users, searchTerm]);
 
-  // Pagination
   const paginatedUsers = useMemo(() => {
     const start = (currentPage - 1) * perPage;
     return filteredUsers.slice(start, start + perPage);
@@ -68,49 +74,42 @@ export default function User() {
     setCurrentPage(1);
   }, [searchTerm]);
 
-  // ✅ Create user – always send role = 'staff'
   const handleCreateSubmit = async (formData) => {
     try {
-      await api.post('/users', {
-        ...formData,
-        role: 'staff', // backend requires role
-      });
+      await api.post('/users', { ...formData, role: 'staff' });
+      showToast('Staff user created successfully!', 'success');
       setShowCreate(false);
       fetchUsers();
     } catch (error) {
-      console.error('Error creating user:', error);
-      alert(error.response?.data?.message || 'Failed to create user');
+      const msg = error.response?.data?.message || 'Failed to create user';
+      showToast(msg, 'error');
     }
   };
 
-  // Edit user
   const handleEditClick = (user) => {
     setSelectedUser(user);
     setShowEdit(true);
   };
 
-  // ✅ Update user – send role only if backend needs it (keep existing role, default to 'staff')
   const handleEditSubmit = async (formData) => {
     try {
       const payload = {
         name: formData.name,
         email: formData.email,
-        role: 'staff', // force staff role
+        role: 'staff',
       };
-      if (formData.password.trim()) {
-        payload.password = formData.password;
-      }
+      if (formData.password.trim()) payload.password = formData.password;
       await api.put(`/users/${selectedUser.id}`, payload);
+      showToast('Staff user updated successfully!', 'success');
       setShowEdit(false);
       setSelectedUser(null);
       fetchUsers();
     } catch (error) {
-      console.error('Error updating user:', error);
-      alert(error.response?.data?.message || 'Failed to update user');
+      const msg = error.response?.data?.message || 'Failed to update user';
+      showToast(msg, 'error');
     }
   };
 
-  // Delete user
   const handleDeleteClick = (user) => {
     setDeleteTarget(user);
     setShowDeleteConfirm(true);
@@ -120,12 +119,12 @@ export default function User() {
     if (!deleteTarget) return;
     try {
       await api.delete(`/users/${deleteTarget.id}`);
+      showToast('Staff user deleted successfully!', 'success');
       setShowDeleteConfirm(false);
       setDeleteTarget(null);
       fetchUsers();
     } catch (error) {
-      console.error('Error deleting user:', error);
-      alert('Failed to delete user');
+      showToast('Failed to delete user', 'error');
     }
   };
 
@@ -216,6 +215,16 @@ export default function User() {
         onConfirm={handleDeleteConfirm}
         itemName={deleteTarget?.name}
       />
+
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() =>
+            setToast({ show: false, message: '', type: 'success' })
+          }
+        />
+      )}
     </div>
   );
 }

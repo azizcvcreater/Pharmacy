@@ -7,6 +7,7 @@ import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { SearchInput } from '../../components/SearchInput';
 import { TablePagination } from '../../components/TablePagination';
 import { PaymentForm } from './components/PaymentForm';
+import Toast from '../../components/Toast';
 
 export default function Payments() {
   const [payments, setPayments] = useState([]);
@@ -17,6 +18,15 @@ export default function Payments() {
   const [showForm, setShowForm] = useState(false);
   const [editingPayment, setEditingPayment] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
+
+  const [toast, setToast] = useState({
+    show: false,
+    message: '',
+    type: 'success',
+  });
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+  };
 
   const itemsPerPage = 3;
 
@@ -31,6 +41,7 @@ export default function Payments() {
       setSuppliers(res.data);
     } catch (error) {
       console.error(error);
+      showToast('Failed to load suppliers.', 'error');
     }
   };
 
@@ -41,6 +52,7 @@ export default function Payments() {
       setPayments(res.data.data || []);
     } catch (error) {
       console.error(error);
+      showToast('Failed to load payments.', 'error');
     } finally {
       setLoading(false);
     }
@@ -49,14 +61,14 @@ export default function Payments() {
   const handleDelete = async () => {
     try {
       await api.delete(`/payments/${deleteId}`);
+      showToast('Payment deleted successfully!', 'success');
       setDeleteId(null);
       fetchPayments();
     } catch (error) {
-      console.error(error);
+      showToast('Failed to delete payment.', 'error');
     }
   };
 
-  // Filter payments by search term
   const filteredPayments = useMemo(() => {
     if (!searchTerm.trim()) return payments;
     const lower = searchTerm.toLowerCase();
@@ -64,11 +76,10 @@ export default function Payments() {
       (p) =>
         p.supplier?.name.toLowerCase().includes(lower) ||
         p.note?.toLowerCase().includes(lower) ||
-        p.amount.toString().includes(lower),
+        p.amount?.toString().includes(lower),
     );
   }, [payments, searchTerm]);
 
-  // Pagination
   const paginatedPayments = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
     return filteredPayments.slice(start, start + itemsPerPage);
@@ -83,9 +94,20 @@ export default function Payments() {
     if (currentPage < totalFilteredPages) setCurrentPage((prev) => prev + 1);
   };
 
+  // Safely get the payment for delete modal
+  const getDeleteItemName = () => {
+    const payment = payments.find((p) => p.id === deleteId);
+    if (!payment) return 'this payment';
+    const amount =
+      typeof payment.amount === 'number'
+        ? payment.amount
+        : parseFloat(payment.amount);
+    const formattedAmount = !isNaN(amount) ? amount.toFixed(2) : '0.00';
+    return `payment of $${formattedAmount} to ${payment.supplier?.name || 'unknown supplier'}`;
+  };
+
   return (
     <div className='space-y-6 px-4 sm:px-6 lg:px-8'>
-      {/* Header */}
       <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
         <h1 className='text-2xl font-semibold text-gray-800'>
           Payments to Suppliers
@@ -102,7 +124,6 @@ export default function Payments() {
         </button>
       </div>
 
-      {/* Search */}
       <div className='flex justify-end'>
         <SearchInput
           value={searchTerm}
@@ -112,7 +133,6 @@ export default function Payments() {
         />
       </div>
 
-      {/* Table Container */}
       <div className='rounded-xl border border-gray-100 bg-white p-4 sm:p-6 shadow-sm'>
         {loading ? (
           <LoadingSpinner />
@@ -122,7 +142,6 @@ export default function Payments() {
           </div>
         ) : (
           <>
-            {/* Horizontal scroll wrapper */}
             <div className='overflow-x-auto -mx-4 sm:mx-0'>
               <div className='inline-block min-w-full align-middle'>
                 <table className='min-w-[640px] sm:min-w-full divide-y divide-gray-200'>
@@ -167,15 +186,13 @@ export default function Payments() {
                                 setEditingPayment(payment);
                                 setShowForm(true);
                               }}
-                              className='inline-flex items-center justify-center rounded-lg bg-blue-50 p-2 text-blue-700 transition hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 active:scale-95'
-                              aria-label='Edit payment'
+                              className='inline-flex items-center justify-center rounded-lg bg-blue-50 p-2 text-blue-700 transition hover:bg-blue-100'
                             >
                               <FiEdit2 className='h-4 w-4' />
                             </button>
                             <button
                               onClick={() => setDeleteId(payment.id)}
-                              className='inline-flex items-center justify-center rounded-lg bg-red-50 p-2 text-red-700 transition hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 active:scale-95'
-                              aria-label='Delete payment'
+                              className='inline-flex items-center justify-center rounded-lg bg-red-50 p-2 text-red-700 transition hover:bg-red-100'
                             >
                               <FiTrash2 className='h-4 w-4' />
                             </button>
@@ -198,7 +215,6 @@ export default function Payments() {
         )}
       </div>
 
-      {/* Payment Form Modal */}
       {showForm && (
         <Modal
           title={editingPayment ? 'Edit Payment' : 'New Payment'}
@@ -210,19 +226,32 @@ export default function Payments() {
             onSuccess={() => {
               setShowForm(false);
               fetchPayments();
+              showToast(
+                editingPayment ? 'Payment updated!' : 'Payment created!',
+                'success',
+              );
             }}
             onCancel={() => setShowForm(false)}
           />
         </Modal>
       )}
 
-      {/* Delete Confirmation Modal */}
       <DeleteConfirmModal
         isOpen={!!deleteId}
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
-        itemName={`payment of $${payments.find((p) => p.id === deleteId)?.amount?.toFixed(2)} to ${payments.find((p) => p.id === deleteId)?.supplier?.name}`}
+        itemName={getDeleteItemName()}
       />
+
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() =>
+            setToast({ show: false, message: '', type: 'success' })
+          }
+        />
+      )}
     </div>
   );
 }

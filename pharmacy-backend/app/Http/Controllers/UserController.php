@@ -27,7 +27,7 @@ class UserController extends Controller{
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
-            'role' => 'required|in:pharmacist,staff',
+            'role' => 'required|in:staff',
         ]);
 
         $user = User::create([
@@ -59,7 +59,7 @@ class UserController extends Controller{
         $request->validate([
             'name' => 'sometimes|string|max:255',
             'email' => 'sometimes|email|unique:users,email,' . $id,
-            'role' => 'sometimes|in:pharmacist,staff',
+            'role' => 'sometimes|in:staff',
             'password' => 'sometimes|min:6'
         ]);
 

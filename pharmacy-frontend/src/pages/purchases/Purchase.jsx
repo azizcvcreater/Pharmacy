@@ -10,6 +10,7 @@ import { DeleteConfirmModal } from '../../components/DeleteConfirmModal';
 import { PurchaseTable } from './components/PurchaseTable';
 import { PurchaseDetail } from './components/PurchaseDetail';
 import { PurchaseForm } from './components/PurchaseForm';
+import Toast from '../../components/Toast'; // Import Toast
 
 export default function Purchase() {
   const [purchases, setPurchases] = useState([]);
@@ -38,16 +39,19 @@ export default function Purchase() {
   const [suppliers, setSuppliers] = useState([]);
   const [supplierBalance, setSupplierBalance] = useState(null);
 
-  const downloadReport = (status) => {
-    window.open(
-      `http://127.0.0.1:8000/api/purchase/report/table?status=${status}`,
-      '_blank',
-    );
+  // Toast state
+  const [toast, setToast] = useState({
+    show: false,
+    message: '',
+    type: 'success',
+  });
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
   };
 
   // Form state (shared for create & edit)
   const [form, setForm] = useState({
-    supplier_id: '', // NEW
+    supplier_id: '',
     bill_no: '',
     purchase_date: new Date().toISOString().slice(0, 10),
     paid_amount: 0,
@@ -72,6 +76,31 @@ export default function Purchase() {
   const [dosage, setDosage] = useState([]);
   const [strength, setStrength] = useState([]);
   const [route, setRoute] = useState([]);
+
+  // ---------- Validation ----------
+  const validatePurchaseForm = (formData) => {
+    if (!formData.supplier_id) return 'Please select a supplier.';
+    if (!formData.bill_no.trim()) return 'Bill number is required.';
+    if (!formData.purchase_date) return 'Purchase date is required.';
+    if (formData.paid_amount < 0) return 'Paid amount cannot be negative.';
+
+    for (let i = 0; i < formData.medicines.length; i++) {
+      const med = formData.medicines[i];
+      if (!med.quantity || med.quantity <= 0)
+        return `Row ${i + 1}: Quantity must be greater than 0.`;
+      if (!med.generic) return `Row ${i + 1}: Generic name is required.`;
+      if (!med.brand) return `Row ${i + 1}: Brand is required.`;
+      if (!med.dosage) return `Row ${i + 1}: Dosage form is required.`;
+      if (!med.strength) return `Row ${i + 1}: Strength is required.`;
+      if (!med.route) return `Row ${i + 1}: Route is required.`;
+      if (!med.buy_price || med.buy_price <= 0)
+        return `Row ${i + 1}: Buy price must be greater than 0.`;
+      if (!med.sale_price || med.sale_price <= 0)
+        return `Row ${i + 1}: Sale price must be greater than 0.`;
+      if (!med.expiry_date) return `Row ${i + 1}: Expiry date is required.`;
+    }
+    return null;
+  };
 
   // Fetch suppliers on mount
   useEffect(() => {
@@ -172,7 +201,7 @@ export default function Purchase() {
 
   const removeRow = (index) => {
     if (form.medicines.length === 1) {
-      alert('At least one row required');
+      showToast('At least one medicine row is required.', 'error');
       return;
     }
     const rows = [...form.medicines];
@@ -194,7 +223,7 @@ export default function Purchase() {
       paid_amount: 0,
       medicines: [
         {
-          quantity: '',
+          quantity: 1,
           generic: '',
           brand: '',
           dosage: '',
@@ -212,13 +241,20 @@ export default function Purchase() {
   // Create
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
+    const error = validatePurchaseForm(form);
+    if (error) {
+      showToast(error, 'error');
+      return;
+    }
     try {
       await api.post('/purchases', form);
+      showToast('Purchase saved successfully!', 'success');
       setShowCreate(false);
       resetForm();
       fetchPurchases(currentPage, statusFilter);
     } catch (error) {
-      console.error(error);
+      const msg = error.response?.data?.message || 'Failed to save purchase.';
+      showToast(msg, 'error');
     }
   };
 
@@ -245,25 +281,32 @@ export default function Purchase() {
           expiry_date: d.expiry_date,
         })),
       });
-      // Optionally fetch supplier balance for display
       if (data.supplier_id) {
         fetchSupplierBalance(data.supplier_id);
       }
       setShowEdit(true);
     } catch (error) {
       console.error(error);
+      showToast('Failed to load purchase data.', 'error');
     }
   };
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
+    const error = validatePurchaseForm(form);
+    if (error) {
+      showToast(error, 'error');
+      return;
+    }
     try {
       await api.put(`/purchases/${editId}`, form);
+      showToast('Purchase updated successfully!', 'success');
       setShowEdit(false);
       resetForm();
       fetchPurchases(currentPage, statusFilter);
     } catch (error) {
-      console.error(error);
+      const msg = error.response?.data?.message || 'Failed to update purchase.';
+      showToast(msg, 'error');
     }
   };
 
@@ -276,11 +319,12 @@ export default function Purchase() {
   const confirmDelete = async () => {
     try {
       await api.delete(`/purchases/${deleteId}`);
+      showToast('Purchase deleted successfully!', 'success');
       setShowDeleteConfirm(false);
       setDeleteId(null);
       fetchPurchases(currentPage, statusFilter);
     } catch (error) {
-      console.error(error);
+      showToast('Delete failed. Please try again.', 'error');
     }
   };
 
@@ -292,6 +336,7 @@ export default function Purchase() {
       setShowDetail(true);
     } catch (error) {
       console.error(error);
+      showToast('Failed to load purchase details.', 'error');
     }
   };
 
@@ -308,6 +353,13 @@ export default function Purchase() {
   const handleStatusChange = (status) => {
     setStatusFilter(status);
     setCurrentPage(1);
+  };
+
+  const downloadReport = (status) => {
+    window.open(
+      `http://127.0.0.1:8000/api/purchase/report/table?status=${status}`,
+      '_blank',
+    );
   };
 
   // Search filter (local)
@@ -354,7 +406,6 @@ export default function Purchase() {
 
       {/* Filter and Search */}
       <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
-        {/* Status Tabs */}
         <div className='flex space-x-2 rounded-lg bg-gray-100 p-1'>
           {['all', 'pending', 'paid', 'partial'].map((status) => (
             <button
@@ -377,8 +428,6 @@ export default function Purchase() {
             Download PDF {statusFilter === 'all' ? 'All' : statusFilter}
           </button>
         </div>
-
-        {/* Search */}
         <div className='sm:w-72'>
           <SearchInput
             value={searchTerm}
@@ -490,6 +539,17 @@ export default function Purchase() {
         onConfirm={confirmDelete}
         itemName={`purchase #${deleteId}`}
       />
+
+      {/* Toast Notifications */}
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() =>
+            setToast({ show: false, message: '', type: 'success' })
+          }
+        />
+      )}
     </div>
   );
 }

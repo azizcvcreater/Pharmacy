@@ -6,10 +6,12 @@ export function SupplierForm({ supplier, onSuccess, onCancel }) {
   const [phone, setPhone] = useState(supplier?.phone || '');
   const [address, setAddress] = useState(supplier?.address || '');
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setErrors({});
     try {
       if (supplier) {
         await api.put(`/suppliers/${supplier.id}`, { name, phone, address });
@@ -18,11 +20,18 @@ export function SupplierForm({ supplier, onSuccess, onCancel }) {
       }
       onSuccess();
     } catch (error) {
-      console.error(error);
+      if (error.response?.status === 422) {
+        setErrors(error.response.data.errors);
+      } else {
+        console.error(error);
+        // Optional: show a toast notification for non‑validation errors
+      }
     } finally {
       setLoading(false);
     }
   };
+
+  const getError = (field) => errors[field]?.[0];
 
   return (
     <form onSubmit={handleSubmit} className='space-y-5'>
@@ -39,11 +48,19 @@ export function SupplierForm({ supplier, onSuccess, onCancel }) {
           type='text'
           placeholder='Enter supplier name'
           value={name}
-          onChange={(e) => setName(e.target.value)}
-          className='w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20'
+          onChange={(e) => {
+            setName(e.target.value);
+            if (errors.name) setErrors({ ...errors, name: undefined });
+          }}
+          className={`w-full rounded-lg border ${
+            getError('name') ? 'border-red-500' : 'border-gray-300'
+          } px-4 py-2.5 text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20`}
           required
           disabled={loading}
         />
+        {getError('name') && (
+          <p className='mt-1 text-sm text-red-600'>{getError('name')}</p>
+        )}
       </div>
 
       {/* Phone Field */}
@@ -59,10 +76,18 @@ export function SupplierForm({ supplier, onSuccess, onCancel }) {
           type='tel'
           placeholder='Enter phone number'
           value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          className='w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20'
+          onChange={(e) => {
+            setPhone(e.target.value);
+            if (errors.phone) setErrors({ ...errors, phone: undefined });
+          }}
+          className={`w-full rounded-lg border ${
+            getError('phone') ? 'border-red-500' : 'border-gray-300'
+          } px-4 py-2.5 text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20`}
           disabled={loading}
         />
+        {getError('phone') && (
+          <p className='mt-1 text-sm text-red-600'>{getError('phone')}</p>
+        )}
       </div>
 
       {/* Address Field */}
@@ -77,11 +102,19 @@ export function SupplierForm({ supplier, onSuccess, onCancel }) {
           id='supplier-address'
           placeholder='Enter address'
           value={address}
-          onChange={(e) => setAddress(e.target.value)}
+          onChange={(e) => {
+            setAddress(e.target.value);
+            if (errors.address) setErrors({ ...errors, address: undefined });
+          }}
           rows={3}
-          className='w-full rounded-lg border border-gray-300 px-4 py-2.5 text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 resize-y'
+          className={`w-full rounded-lg border ${
+            getError('address') ? 'border-red-500' : 'border-gray-300'
+          } px-4 py-2.5 text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 resize-y`}
           disabled={loading}
         />
+        {getError('address') && (
+          <p className='mt-1 text-sm text-red-600'>{getError('address')}</p>
+        )}
       </div>
 
       {/* Action Buttons */}

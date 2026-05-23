@@ -9,10 +9,12 @@ export function PaymentForm({ payment, suppliers, onSuccess, onCancel }) {
   );
   const [note, setNote] = useState(payment?.note || '');
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setErrors({});
     try {
       const payload = {
         supplier_id: parseInt(supplierId, 10),
@@ -27,9 +29,21 @@ export function PaymentForm({ payment, suppliers, onSuccess, onCancel }) {
       }
       onSuccess();
     } catch (error) {
-      console.error(error);
+      if (error.response?.status === 422) {
+        setErrors(error.response.data.errors);
+      } else {
+        console.error(error);
+      }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getError = (field) => errors[field]?.[0];
+
+  const clearFieldError = (field) => {
+    if (errors[field]) {
+      setErrors({ ...errors, [field]: undefined });
     }
   };
 
@@ -46,8 +60,13 @@ export function PaymentForm({ payment, suppliers, onSuccess, onCancel }) {
         <select
           id='supplier'
           value={supplierId}
-          onChange={(e) => setSupplierId(e.target.value)}
-          className='w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
+          onChange={(e) => {
+            setSupplierId(e.target.value);
+            clearFieldError('supplier_id');
+          }}
+          className={`w-full rounded-md border ${
+            getError('supplier_id') ? 'border-red-500' : 'border-gray-300'
+          } px-3 py-1.5 text-sm text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500`}
           required
           disabled={loading}
         >
@@ -58,6 +77,9 @@ export function PaymentForm({ payment, suppliers, onSuccess, onCancel }) {
             </option>
           ))}
         </select>
+        {getError('supplier_id') && (
+          <p className='mt-1 text-xs text-red-600'>{getError('supplier_id')}</p>
+        )}
       </div>
 
       {/* Amount */}
@@ -75,11 +97,19 @@ export function PaymentForm({ payment, suppliers, onSuccess, onCancel }) {
           min='0.01'
           placeholder='0.00'
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          className='w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
+          onChange={(e) => {
+            setAmount(e.target.value);
+            clearFieldError('amount');
+          }}
+          className={`w-full rounded-md border ${
+            getError('amount') ? 'border-red-500' : 'border-gray-300'
+          } px-3 py-1.5 text-sm text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500`}
           required
           disabled={loading}
         />
+        {getError('amount') && (
+          <p className='mt-1 text-xs text-red-600'>{getError('amount')}</p>
+        )}
       </div>
 
       {/* Payment Date */}
@@ -94,11 +124,21 @@ export function PaymentForm({ payment, suppliers, onSuccess, onCancel }) {
           id='paymentDate'
           type='date'
           value={paymentDate}
-          onChange={(e) => setPaymentDate(e.target.value)}
-          className='w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
+          onChange={(e) => {
+            setPaymentDate(e.target.value);
+            clearFieldError('payment_date');
+          }}
+          className={`w-full rounded-md border ${
+            getError('payment_date') ? 'border-red-500' : 'border-gray-300'
+          } px-3 py-1.5 text-sm text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500`}
           required
           disabled={loading}
         />
+        {getError('payment_date') && (
+          <p className='mt-1 text-xs text-red-600'>
+            {getError('payment_date')}
+          </p>
+        )}
       </div>
 
       {/* Note - compact */}
@@ -113,11 +153,19 @@ export function PaymentForm({ payment, suppliers, onSuccess, onCancel }) {
           id='note'
           placeholder='Additional remarks...'
           value={note}
-          onChange={(e) => setNote(e.target.value)}
+          onChange={(e) => {
+            setNote(e.target.value);
+            clearFieldError('note');
+          }}
           rows={2}
-          className='w-full rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-y'
+          className={`w-full rounded-md border ${
+            getError('note') ? 'border-red-500' : 'border-gray-300'
+          } px-3 py-1.5 text-sm text-gray-900 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-y`}
           disabled={loading}
         />
+        {getError('note') && (
+          <p className='mt-1 text-xs text-red-600'>{getError('note')}</p>
+        )}
       </div>
 
       {/* Action Buttons - compact */}

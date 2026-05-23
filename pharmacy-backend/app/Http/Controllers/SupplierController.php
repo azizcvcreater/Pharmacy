@@ -55,17 +55,21 @@ class SupplierController extends Controller
     }
 
     public function balance($id)
-    {
-        $lastLedger = Ledger::where('supplier_id', $id)
-            ->where('pharmacy_id', Auth::user()->pharmacy_id)
-            ->orderBy('transaction_date', 'asc')
-            ->orderBy('id', 'asc')
-            ->get()
-            ->last();
+{
+    $supplier = Supplier::where('pharmacy_id', Auth::user()->pharmacy_id)->findOrFail($id);
 
-        $balance = $lastLedger ? $lastLedger->balance : 0;
-        return response()->json(['balance' => $balance]);
-    }
+    $totalPurchases = Ledger::where('supplier_id', $id)
+        ->where('type', 'purchase')
+        ->sum('amount');
+
+    $totalPayments = Ledger::where('supplier_id', $id)
+        ->where('type', 'payment')
+        ->sum('amount');
+
+    $balance = $totalPurchases - $totalPayments;
+
+    return response()->json(['balance' => $balance]);
+}
 
     public function ledger($id)
     {

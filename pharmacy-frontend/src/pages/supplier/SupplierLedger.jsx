@@ -53,12 +53,20 @@ export default function SupplierLedger() {
     }
   };
 
-  // Filter ledgers based on search term (case-insensitive)
+  // Helper to convert reference object to display string
+  const getReferenceDisplay = (reference) => {
+    if (!reference) return '—';
+    if (reference.bill_no) return `Purchase #${reference.bill_no}`;
+    if (reference.payment_date)
+      return `Payment on ${new Date(reference.payment_date).toLocaleDateString()}`;
+    if (typeof reference === 'string') return reference;
+    return 'Reference';
+  };
+
   const filteredLedgers = useMemo(() => {
     if (!searchTerm.trim()) return ledgers;
     const term = searchTerm.toLowerCase();
     return ledgers.filter((ledger) => {
-      // Search in type, amount, date, and any description/note fields
       const amountMatch = Number(ledger.amount).toString().includes(term);
       const typeMatch = ledger.type?.toLowerCase().includes(term);
       const dateMatch = ledger.transaction_date
@@ -74,13 +82,8 @@ export default function SupplierLedger() {
     });
   }, [ledgers, searchTerm]);
 
-  const openModal = (ledger) => {
-    setSelectedLedger(ledger);
-  };
-
-  const closeModal = () => {
-    setSelectedLedger(null);
-  };
+  const openModal = (ledger) => setSelectedLedger(ledger);
+  const closeModal = () => setSelectedLedger(null);
 
   if (loading) return <LoadingSpinner />;
   if (error)
@@ -107,7 +110,7 @@ export default function SupplierLedger() {
         >
           ← Back to Suppliers
         </button>
-        <div className='h-6 w-px bg-gray-300' /> {/* Vertical divider */}
+        <div className='h-6 w-px bg-gray-300' />
         <div className='flex flex-wrap items-baseline gap-2'>
           <span className='text-xl font-bold text-gray-800'>
             {supplier.name}
@@ -129,7 +132,6 @@ export default function SupplierLedger() {
         </div>
       </div>
 
-      {/* Ledger Table with Search */}
       <div className='bg-white rounded-lg shadow overflow-hidden'>
         <div className='flex items-center justify-between p-4 border-b bg-gray-50'>
           <h3 className='text-lg font-semibold text-gray-800'>
@@ -142,7 +144,6 @@ export default function SupplierLedger() {
           />
         </div>
 
-        {/* Scrollable Table */}
         <div className='overflow-x-auto max-h-72 overflow-y-auto'>
           <table className='min-w-full divide-y divide-gray-200'>
             <thead className='bg-gray-50 sticky top-0 z-10'>
@@ -213,7 +214,6 @@ export default function SupplierLedger() {
         </div>
       </div>
 
-      {/* Modal for Ledger Details */}
       {selectedLedger && (
         <Modal onClose={closeModal} title='Ledger Entry Details'>
           <div className='space-y-3'>
@@ -228,11 +228,7 @@ export default function SupplierLedger() {
             <div className='grid grid-cols-2 gap-2 border-b pb-2'>
               <span className='font-medium text-gray-600'>Type:</span>
               <span
-                className={`capitalize font-semibold ${
-                  selectedLedger.type === 'purchase'
-                    ? 'text-red-600'
-                    : 'text-green-600'
-                }`}
+                className={`capitalize font-semibold ${selectedLedger.type === 'purchase' ? 'text-red-600' : 'text-green-600'}`}
               >
                 {selectedLedger.type}
               </span>
@@ -240,11 +236,7 @@ export default function SupplierLedger() {
             <div className='grid grid-cols-2 gap-2 border-b pb-2'>
               <span className='font-medium text-gray-600'>Amount:</span>
               <span
-                className={`font-bold ${
-                  selectedLedger.type === 'purchase'
-                    ? 'text-red-600'
-                    : 'text-green-600'
-                }`}
+                className={`font-bold ${selectedLedger.type === 'purchase' ? 'text-red-600' : 'text-green-600'}`}
               >
                 {selectedLedger.type === 'purchase' ? '+' : '-'}$
                 {Number(selectedLedger.amount).toFixed(2)}
@@ -270,7 +262,7 @@ export default function SupplierLedger() {
               <div className='grid grid-cols-2 gap-2'>
                 <span className='font-medium text-gray-600'>Reference:</span>
                 <span className='text-gray-800'>
-                  {selectedLedger.reference}
+                  {getReferenceDisplay(selectedLedger.reference)}
                 </span>
               </div>
             )}

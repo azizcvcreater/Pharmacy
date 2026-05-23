@@ -8,23 +8,26 @@ import { TablePagination } from '../../components/TablePagination';
 import { DeleteConfirmModal } from '../../components/DeleteConfirmModal';
 import { ExpensesTable } from './components/ExpensesTable';
 import { ExpenseForm } from './components/ExpenseForm';
+import Toast from '../../components/Toast';
 
 export default function ExpensesPage() {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [totalExpenses, setTotalExpenses] = useState(0);
 
-  // Modal state
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [expenseToDelete, setExpenseToDelete] = useState(null);
+
+  // Validation errors
+  const [createErrors, setCreateErrors] = useState({});
+  const [editErrors, setEditErrors] = useState({});
 
   const [createForm, setCreateForm] = useState({
     title: '',
@@ -40,7 +43,16 @@ export default function ExpensesPage() {
     note: '',
   });
 
-  // Load expenses with pagination
+  // Toast
+  const [toast, setToast] = useState({
+    show: false,
+    message: '',
+    type: 'success',
+  });
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+  };
+
   const loadExpenses = async (page = 1) => {
     setLoading(true);
     try {
@@ -51,6 +63,7 @@ export default function ExpensesPage() {
       setTotalExpenses(res.data.total || data.length);
     } catch (error) {
       console.error('Failed to load expenses', error);
+      showToast('Failed to load expenses.', 'error');
     } finally {
       setLoading(false);
     }
@@ -60,7 +73,6 @@ export default function ExpensesPage() {
     loadExpenses(currentPage);
   }, [currentPage]);
 
-  // Client-side search on current page
   const filteredExpenses = useMemo(() => {
     if (!searchTerm.trim()) return expenses;
     const lowerSearch = searchTerm.toLowerCase();
@@ -78,7 +90,6 @@ export default function ExpensesPage() {
     });
   }, [expenses, searchTerm]);
 
-  // Format currency
   const formatCurrency = (amount) => {
     if (!amount) return '—';
     return new Intl.NumberFormat('en-US', {
@@ -88,7 +99,6 @@ export default function ExpensesPage() {
     }).format(amount);
   };
 
-  // Format date
   const formatDate = (dateString) => {
     if (!dateString) return '—';
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -98,29 +108,37 @@ export default function ExpensesPage() {
     });
   };
 
-  // Handlers for create modal
   const handleCreateChange = (e) => {
     setCreateForm({ ...createForm, [e.target.name]: e.target.value });
+    // Clear validation errors when user types
+    setCreateErrors({});
   };
 
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
     try {
       await api.post('/expenses', createForm);
+      showToast('Expense created successfully!', 'success');
       setCreateForm({ title: '', amount: '', expense_date: '', note: '' });
       setIsCreateModalOpen(false);
+      setCreateErrors({});
       loadExpenses(currentPage);
     } catch (error) {
-      console.error('Create failed', error);
+      if (error.response?.status === 422) {
+        setCreateErrors(error.response.data.errors);
+      } else {
+        const msg = error.response?.data?.message || 'Failed to create expense';
+        showToast(msg, 'error');
+      }
     }
   };
 
   const closeCreateModal = () => {
     setIsCreateModalOpen(false);
     setCreateForm({ title: '', amount: '', expense_date: '', note: '' });
+    setCreateErrors({});
   };
 
-  // Handlers for edit modal
   const handleEditClick = (expense) => {
     setEditForm({
       id: expense.id,
@@ -129,17 +147,20 @@ export default function ExpensesPage() {
       expense_date: expense.expense_date,
       note: expense.note || '',
     });
+    setEditErrors({});
     setIsEditModalOpen(true);
   };
 
   const handleEditChange = (e) => {
     setEditForm({ ...editForm, [e.target.name]: e.target.value });
+    setEditErrors({});
   };
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
       await api.put(`/expenses/${editForm.id}`, editForm);
+      showToast('Expense updated successfully!', 'success');
       setEditForm({
         id: null,
         title: '',
@@ -148,9 +169,15 @@ export default function ExpensesPage() {
         note: '',
       });
       setIsEditModalOpen(false);
+      setEditErrors({});
       loadExpenses(currentPage);
     } catch (error) {
-      console.error('Update failed', error);
+      if (error.response?.status === 422) {
+        setEditErrors(error.response.data.errors);
+      } else {
+        const msg = error.response?.data?.message || 'Failed to update expense';
+        showToast(msg, 'error');
+      }
     }
   };
 
@@ -163,9 +190,9 @@ export default function ExpensesPage() {
       expense_date: '',
       note: '',
     });
+    setEditErrors({});
   };
 
-  // Delete handlers with modal
   const openDeleteModal = (expense) => {
     setExpenseToDelete(expense);
     setShowDeleteConfirm(true);
@@ -180,6 +207,7 @@ export default function ExpensesPage() {
     if (!expenseToDelete) return;
     try {
       await api.delete(`/expenses/${expenseToDelete.id}`);
+      showToast('Expense deleted successfully!', 'success');
       closeDeleteModal();
       if (expenses.length === 1 && currentPage > 1) {
         setCurrentPage((prev) => prev - 1);
@@ -187,11 +215,10 @@ export default function ExpensesPage() {
         loadExpenses(currentPage);
       }
     } catch (error) {
-      console.error('Delete failed', error);
+      showToast('Failed to delete expense.', 'error');
     }
   };
 
-  // Pagination controls
   const handlePrev = () => {
     if (currentPage > 1) setCurrentPage((prev) => prev - 1);
   };
@@ -202,7 +229,6 @@ export default function ExpensesPage() {
 
   return (
     <div className='space-y-6'>
-      {/* Header */}
       <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between'>
         <h1 className='text-2xl font-semibold text-gray-800'>Expenses</h1>
         <div className='mt-4 sm:mt-0 flex items-center space-x-3'>
@@ -219,7 +245,6 @@ export default function ExpensesPage() {
         </div>
       </div>
 
-      {/* Search */}
       <div className='sm:w-72'>
         <SearchInput
           value={searchTerm}
@@ -228,7 +253,6 @@ export default function ExpensesPage() {
         />
       </div>
 
-      {/* Table Card */}
       <div className='rounded-xl border border-gray-100 bg-white p-6 shadow-sm'>
         {loading ? (
           <LoadingSpinner />
@@ -257,7 +281,6 @@ export default function ExpensesPage() {
         )}
       </div>
 
-      {/* Create Modal */}
       {isCreateModalOpen && (
         <Modal onClose={closeCreateModal} title='Add New Expense'>
           <ExpenseForm
@@ -266,11 +289,12 @@ export default function ExpensesPage() {
             onSubmit={handleCreateSubmit}
             onCancel={closeCreateModal}
             submitLabel='Add Expense'
+            errors={createErrors}
+            clearErrors={() => setCreateErrors({})}
           />
         </Modal>
       )}
 
-      {/* Edit Modal */}
       {isEditModalOpen && (
         <Modal onClose={closeEditModal} title='Edit Expense'>
           <ExpenseForm
@@ -279,17 +303,28 @@ export default function ExpensesPage() {
             onSubmit={handleEditSubmit}
             onCancel={closeEditModal}
             submitLabel='Update Expense'
+            errors={editErrors}
+            clearErrors={() => setEditErrors({})}
           />
         </Modal>
       )}
 
-      {/* Delete Confirmation Modal */}
       <DeleteConfirmModal
         isOpen={showDeleteConfirm}
         onClose={closeDeleteModal}
         onConfirm={confirmDelete}
         itemName={`expense "${expenseToDelete?.title}"`}
       />
+
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() =>
+            setToast({ show: false, message: '', type: 'success' })
+          }
+        />
+      )}
     </div>
   );
 }

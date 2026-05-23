@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState, useMemo } from 'react';
 import { FiPlus } from 'react-icons/fi';
 import api from '../../api';
@@ -7,6 +8,7 @@ import { ItemsTable } from './components/ItemsTable';
 import { TablePagination } from '../../components/TablePagination';
 import { ItemForm } from './components/ItemForm';
 import { DeleteConfirmModal } from '../../components/DeleteConfirmModal';
+import Toast from '../../components/Toast';
 
 export default function ItemsPage() {
   const [items, setItems] = useState([]);
@@ -24,6 +26,20 @@ export default function ItemsPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
+
+  // Validation errors
+  const [createErrors, setCreateErrors] = useState({});
+  const [editErrors, setEditErrors] = useState({});
+
+  // Toast state
+  const [toast, setToast] = useState({
+    show: false,
+    message: '',
+    type: 'success',
+  });
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+  };
 
   // Forms
   const [createForm, setCreateForm] = useState({
@@ -53,6 +69,7 @@ export default function ItemsPage() {
       setTotalItems(res.data.total || data.length);
     } catch (error) {
       console.error(error);
+      showToast('Failed to load items.', 'error');
     } finally {
       setLoading(false);
     }
@@ -84,12 +101,15 @@ export default function ItemsPage() {
   // Create handlers
   const handleCreateChange = (e) => {
     setCreateForm({ ...createForm, [e.target.name]: e.target.value });
+    // Clear validation errors when user types
+    setCreateErrors({});
   };
 
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
     try {
       await api.post('/items', createForm);
+      showToast('Item created successfully!', 'success');
       setCreateForm({
         generic: '',
         brand: '',
@@ -98,9 +118,15 @@ export default function ItemsPage() {
         route: '',
       });
       setIsCreateModalOpen(false);
+      setCreateErrors({});
       loadItems(currentPage);
     } catch (error) {
-      console.error(error);
+      if (error.response?.status === 422) {
+        setCreateErrors(error.response.data.errors);
+      } else {
+        const msg = error.response?.data?.message || 'Failed to create item.';
+        showToast(msg, 'error');
+      }
     }
   };
 
@@ -114,17 +140,20 @@ export default function ItemsPage() {
       strength: item.strength,
       route: item.route,
     });
+    setEditErrors({});
     setIsEditModalOpen(true);
   };
 
   const handleEditChange = (e) => {
     setEditForm({ ...editForm, [e.target.name]: e.target.value });
+    setEditErrors({});
   };
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
       await api.put(`/items/${editForm.id}`, editForm);
+      showToast('Item updated successfully!', 'success');
       setEditForm({
         id: null,
         generic: '',
@@ -134,9 +163,15 @@ export default function ItemsPage() {
         route: '',
       });
       setIsEditModalOpen(false);
+      setEditErrors({});
       loadItems(currentPage);
     } catch (error) {
-      console.error(error);
+      if (error.response?.status === 422) {
+        setEditErrors(error.response.data.errors);
+      } else {
+        const msg = error.response?.data?.message || 'Failed to update item.';
+        showToast(msg, 'error');
+      }
     }
   };
 
@@ -155,6 +190,7 @@ export default function ItemsPage() {
     if (!itemToDelete) return;
     try {
       await api.delete(`/items/${itemToDelete.id}`);
+      showToast('Item deleted successfully!', 'success');
       closeDeleteModal();
       if (items.length === 1 && currentPage > 1) {
         setCurrentPage((prev) => prev - 1);
@@ -162,7 +198,7 @@ export default function ItemsPage() {
         loadItems(currentPage);
       }
     } catch (error) {
-      console.error(error);
+      showToast('Failed to delete item.', 'error');
     }
   };
 
@@ -231,23 +267,33 @@ export default function ItemsPage() {
       {/* Create Modal */}
       <ItemForm
         isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
+        onClose={() => {
+          setIsCreateModalOpen(false);
+          setCreateErrors({});
+        }}
         onSubmit={handleCreateSubmit}
         formData={createForm}
         onChange={handleCreateChange}
         title='Add New Medicine'
         submitLabel='Add Item'
+        errors={createErrors}
+        clearErrors={() => setCreateErrors({})}
       />
 
       {/* Edit Modal */}
       <ItemForm
         isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setEditErrors({});
+        }}
         onSubmit={handleEditSubmit}
         formData={editForm}
         onChange={handleEditChange}
         title='Edit Medicine'
         submitLabel='Update Item'
+        errors={editErrors}
+        clearErrors={() => setEditErrors({})}
       />
 
       {/* Delete Confirmation Modal */}
@@ -257,6 +303,17 @@ export default function ItemsPage() {
         onConfirm={confirmDelete}
         itemName={itemToDelete?.name}
       />
+
+      {/* Toast Notifications */}
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() =>
+            setToast({ show: false, message: '', type: 'success' })
+          }
+        />
+      )}
     </div>
   );
 }

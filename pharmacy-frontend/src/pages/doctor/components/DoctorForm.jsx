@@ -16,6 +16,8 @@ export function DoctorForm({
   onSubmit,
   submitLabel,
   onCancel,
+  errors = {},
+  clearErrors,
 }) {
   const extraFeeOptions = [
     {
@@ -29,39 +31,40 @@ export function DoctorForm({
   ];
 
   const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    if (clearErrors) clearErrors();
   };
 
   const addExtraFee = (type) => {
     if (extraFees.some((fee) => fee.type === type)) return;
     setExtraFees([...extraFees, { type, amount: '' }]);
+    if (clearErrors) clearErrors();
   };
 
   const removeExtraFee = (type) => {
     setExtraFees(extraFees.filter((fee) => fee.type !== type));
+    if (clearErrors) clearErrors();
   };
 
   const updateExtraFeeAmount = (type, amount) => {
     setExtraFees(
       extraFees.map((fee) => (fee.type === type ? { ...fee, amount } : fee)),
     );
+    if (clearErrors) clearErrors();
   };
+
+  const getError = (field) => errors[field]?.[0];
 
   return (
     <form onSubmit={onSubmit} className='space-y-4'>
-      {/* Consultation Fee – full width but compact */}
+      {/* Consultation Fee */}
       <div className='space-y-1'>
         <label className='flex items-center text-sm font-semibold text-gray-700'>
           <FiDollarSign className='h-4 w-4 mr-2 text-emerald-500' />
-          Consultation Fee () <span className='text-red-500 ml-1'>*</span>
+          Consultation Fee <span className='text-red-500 ml-1'>*</span>
         </label>
         <div className='relative'>
-          <div className='absolute inset-y-0 left-0 pl-1 flex items-center pointer-events-none'>
-            <span className='text-gray-400 text-sm'></span>
-          </div>
           <input
             type='number'
             name='fees'
@@ -71,9 +74,14 @@ export function DoctorForm({
             min='0'
             step='0.01'
             placeholder='0.00'
-            className='w-full pl-8 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-gray-800'
+            className={`w-full pl-8 pr-4 py-2.5 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-indigo-500 transition-all text-gray-800 ${
+              getError('fees') ? 'border-red-500' : 'border-gray-200'
+            }`}
           />
         </div>
+        {getError('fees') && (
+          <p className='text-red-500 text-xs mt-1'>{getError('fees')}</p>
+        )}
       </div>
 
       {/* Optional Test Fees Section */}
@@ -82,7 +90,7 @@ export function DoctorForm({
           <label className='text-sm font-semibold text-gray-700'>
             Optional Test Fees
           </label>
-          <div className='flex gap-2'>
+          <div className='flex gap-2 flex-wrap'>
             {extraFeeOptions.map((option) => {
               const alreadyAdded = extraFees.some(
                 (fee) => fee.type === option.type,
@@ -102,42 +110,50 @@ export function DoctorForm({
           </div>
         </div>
 
-        {/* Extra fees in responsive grid: 1 column on mobile, 2 columns on md+ */}
         <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
           {extraFees.map((fee) => {
             const option = extraFeeOptions.find((opt) => opt.type === fee.type);
             const Icon = option.icon;
+            const errorKey = `${fee.type}_fee`;
             return (
-              <div
-                key={fee.type}
-                className='flex items-center gap-2 p-2 bg-gray-50 rounded-lg border border-gray-100'
-              >
-                <div className={`p-1.5 rounded-lg bg-${option.color}-50`}>
-                  <Icon className={`h-4 w-4 text-${option.color}-500`} />
+              <div key={fee.type} className='space-y-1'>
+                <div className='flex items-center gap-2 p-2 bg-gray-50 rounded-lg border border-gray-100'>
+                  <div className={`p-1.5 rounded-lg bg-${option.color}-50`}>
+                    <Icon className={`h-4 w-4 text-${option.color}-500`} />
+                  </div>
+                  <div className='flex-1'>
+                    <label className='block text-xs text-gray-500 mb-0.5'>
+                      {option.label} Fee
+                    </label>
+                    <input
+                      type='number'
+                      value={fee.amount}
+                      onChange={(e) =>
+                        updateExtraFeeAmount(fee.type, e.target.value)
+                      }
+                      min='0'
+                      step='0.01'
+                      placeholder='0.00'
+                      className={`w-full px-2 py-1 text-sm bg-white border rounded-md focus:ring-2 focus:ring-indigo-500 text-gray-800 ${
+                        getError(errorKey)
+                          ? 'border-red-500'
+                          : 'border-gray-200'
+                      }`}
+                    />
+                  </div>
+                  <button
+                    type='button'
+                    onClick={() => removeExtraFee(fee.type)}
+                    className='p-1 text-red-500 hover:bg-red-50 rounded transition'
+                  >
+                    <FiTrash2 className='h-4 w-4' />
+                  </button>
                 </div>
-                <div className='flex-1'>
-                  <label className='block text-xs text-gray-500 mb-0.5'>
-                    {option.label} Fee ()
-                  </label>
-                  <input
-                    type='number'
-                    value={fee.amount}
-                    onChange={(e) =>
-                      updateExtraFeeAmount(fee.type, e.target.value)
-                    }
-                    min='0'
-                    step='0.01'
-                    placeholder='0.00'
-                    className='w-full px-2 py-1 text-sm bg-white border border-gray-200 rounded-md focus:ring-2 focus:ring-indigo-500 text-gray-800'
-                  />
-                </div>
-                <button
-                  type='button'
-                  onClick={() => removeExtraFee(fee.type)}
-                  className='p-1 text-red-500 hover:bg-red-50 rounded transition'
-                >
-                  <FiTrash2 className='h-4 w-4' />
-                </button>
+                {getError(errorKey) && (
+                  <p className='text-red-500 text-xs ml-2'>
+                    {getError(errorKey)}
+                  </p>
+                )}
               </div>
             );
           })}
@@ -162,8 +178,13 @@ export function DoctorForm({
           onChange={handleInputChange}
           rows='2'
           placeholder='Add any additional notes...'
-          className='w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-gray-800 resize-none'
+          className={`w-full px-3 py-2 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-indigo-500 transition-all text-gray-800 resize-none ${
+            getError('description') ? 'border-red-500' : 'border-gray-200'
+          }`}
         />
+        {getError('description') && (
+          <p className='text-red-500 text-xs mt-1'>{getError('description')}</p>
+        )}
       </div>
 
       {/* Buttons */}

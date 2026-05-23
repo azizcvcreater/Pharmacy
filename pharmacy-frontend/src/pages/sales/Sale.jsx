@@ -10,6 +10,7 @@ import { DeleteConfirmModal } from '../../components/DeleteConfirmModal';
 import { SaleTable } from './components/SaleTable';
 import { SaleDetail } from './components/SaleDetail';
 import { SaleForm } from './components/SaleForm';
+import Toast from '../../components/Toast';
 
 export default function Sale() {
   const [sales, setSales] = useState([]);
@@ -35,7 +36,17 @@ export default function Sale() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  // Form state – no `stock` field anymore
+  // Toast state
+  const [toast, setToast] = useState({
+    show: false,
+    message: '',
+    type: 'success',
+  });
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+  };
+
+  // Form state
   const [form, setForm] = useState({
     bill_no: '',
     patient_name: '',
@@ -44,10 +55,55 @@ export default function Sale() {
     medicines: [
       {
         medicine_id: '',
-        quantity: '',
+        quantity: 1,
         medicine: null,
       },
     ],
+  });
+
+  // ---------- Validation ----------
+  const validateSaleForm = (formData, availableMedicines) => {
+    if (!formData.bill_no.trim()) return 'Bill number is required.';
+    if (!formData.patient_name.trim()) return 'Patient name is required.';
+    if (!formData.sale_date) return 'Sale date is required.';
+    if (formData.paid_amount < 0) return 'Paid amount cannot be negative.';
+
+    // Build stock map (respect original_quantity from edit mode)
+    const stockMap = {};
+    availableMedicines.forEach((med) => {
+      stockMap[med.id] = med.quantity;
+    });
+    formData.medicines.forEach((row) => {
+      if (row.medicine?.original_quantity != null) {
+        stockMap[row.medicine_id] = row.medicine.original_quantity;
+      }
+    });
+
+    const allocated = {};
+    for (let i = 0; i < formData.medicines.length; i++) {
+      const row = formData.medicines[i];
+      if (!row.medicine_id) return `Row ${i + 1}: Please select a medicine.`;
+      if (!row.quantity || row.quantity <= 0)
+        return `Row ${i + 1}: Quantity must be greater than 0.`;
+
+      const available =
+        stockMap[row.medicine_id] - (allocated[row.medicine_id] || 0);
+      if (parseInt(row.quantity) > available) {
+        return `Row ${i + 1}: Only ${available} units available for this medicine.`;
+      }
+      allocated[row.medicine_id] =
+        (allocated[row.medicine_id] || 0) + parseInt(row.quantity);
+    }
+    return null;
+  };
+
+  // Clean payload: remove medicine object and original_quantity
+  const prepareSalePayload = (formData) => ({
+    ...formData,
+    medicines: formData.medicines.map(({ medicine_id, quantity }) => ({
+      medicine_id,
+      quantity,
+    })),
   });
 
   useEffect(() => {
@@ -99,12 +155,16 @@ export default function Sale() {
       ...form,
       medicines: [
         ...form.medicines,
-        { medicine_id: '', quantity: '', medicine: null },
+        { medicine_id: '', quantity: 1, medicine: null },
       ],
     });
   };
 
   const removeRow = (index) => {
+    if (form.medicines.length === 1) {
+      showToast('At least one medicine row is required.', 'error');
+      return;
+    }
     const rows = [...form.medicines];
     rows.splice(index, 1);
     setForm({ ...form, medicines: rows });
@@ -139,25 +199,27 @@ export default function Sale() {
       patient_name: '',
       sale_date: new Date().toISOString().slice(0, 10),
       paid_amount: 0,
-      medicines: [{ medicine_id: '', quantity: '', medicine: null }],
+      medicines: [{ medicine_id: '', quantity: 1, medicine: null }],
     });
-  };
-
-  const validateForm = () => {
-    // Validation is now handled inside SaleForm with dynamic stock
-    // We'll keep a simple check here (can be removed if SaleForm handles it)
-    return { isValid: true };
   };
 
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
+    const error = validateSaleForm(form, medicines);
+    if (error) {
+      showToast(error, 'error');
+      return;
+    }
+    const payload = prepareSalePayload(form);
     try {
-      await api.post('/sales', form);
+      await api.post('/sales', payload);
+      showToast('Sale saved successfully!', 'success');
       setShowCreate(false);
       resetForm();
       fetchSales(currentPage, statusFilter);
     } catch (error) {
-      alert(error.response?.data?.error || 'Error saving sale');
+      const msg = error.response?.data?.error || 'Failed to save sale.';
+      showToast(msg, 'error');
     }
   };
 
@@ -176,25 +238,34 @@ export default function Sale() {
           quantity: d.quantity,
           medicine: {
             ...d.medicine,
-            original_quantity: d.medicine.quantity + d.quantity, // store original stock
+            original_quantity: d.medicine.quantity + d.quantity,
           },
         })),
       });
       setShowEdit(true);
     } catch (error) {
       console.error(error);
+      showToast('Failed to load sale data.', 'error');
     }
   };
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
+    const error = validateSaleForm(form, medicines);
+    if (error) {
+      showToast(error, 'error');
+      return;
+    }
+    const payload = prepareSalePayload(form);
     try {
-      await api.put(`/sales/${editId}`, form);
+      await api.put(`/sales/${editId}`, payload);
+      showToast('Sale updated successfully!', 'success');
       setShowEdit(false);
       resetForm();
       fetchSales(currentPage, statusFilter);
     } catch (error) {
-      alert(error.response?.data?.error || 'Error updating sale');
+      const msg = error.response?.data?.error || 'Failed to update sale.';
+      showToast(msg, 'error');
     }
   };
 
@@ -206,11 +277,12 @@ export default function Sale() {
   const confirmDelete = async () => {
     try {
       await api.delete(`/sales/${deleteId}`);
+      showToast('Sale deleted successfully!', 'success');
       setShowDeleteConfirm(false);
       setDeleteId(null);
       fetchSales(currentPage, statusFilter);
     } catch (error) {
-      alert('Delete failed');
+      showToast('Delete failed. Please try again.', 'error');
     }
   };
 
@@ -221,6 +293,7 @@ export default function Sale() {
       setShowDetail(true);
     } catch (error) {
       console.error(error);
+      showToast('Failed to load sale details.', 'error');
     }
   };
 
@@ -302,8 +375,6 @@ export default function Sale() {
             Download PDF {statusFilter === 'all' ? 'All' : statusFilter}
           </button>
         </div>
-        {/* Single PDF button - respects current status filter */}
-
         <div className='sm:w-72'>
           <SearchInput
             value={searchTerm}
@@ -398,6 +469,17 @@ export default function Sale() {
         onConfirm={confirmDelete}
         itemName={`sale #${deleteId}`}
       />
+
+      {/* Toast Notifications */}
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() =>
+            setToast({ show: false, message: '', type: 'success' })
+          }
+        />
+      )}
     </div>
   );
 }
