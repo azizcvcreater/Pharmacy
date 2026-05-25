@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class PaymentController extends Controller
 
     public function index()
     {
-        $payments = Payment::where('pharmacy_id', Auth::user()->pharmacy_id)
+        $payments = Payment::where('user_id', Auth::id())
             ->with('supplier')
             ->latest()
             ->paginate(10);
@@ -29,8 +30,9 @@ class PaymentController extends Controller
             'note' => 'nullable|string'
         ]);
 
+        // Verify supplier belongs to this user (optional, but good for security)
         $supplier = Supplier::where('id', $request->supplier_id)
-            ->where('pharmacy_id', Auth::user()->pharmacy_id)
+            ->where('user_id', Auth::id())
             ->first();
 
         if (!$supplier) {
@@ -39,7 +41,6 @@ class PaymentController extends Controller
 
         $payment = Payment::create([
             'supplier_id' => $request->supplier_id,
-            'pharmacy_id' => Auth::user()->pharmacy_id,
             'user_id' => Auth::id(),
             'amount' => $request->amount,
             'payment_date' => $request->payment_date,
@@ -56,12 +57,9 @@ class PaymentController extends Controller
 
     public function show($id)
     {
-        $payment = Payment::where('pharmacy_id', Auth::user()->pharmacy_id)
+        $payment = Payment::where('user_id', Auth::id())
             ->with('supplier')
-            ->find($id);
-        if (!$payment) {
-            return response()->json(['message' => 'Payment not found'], 404);
-        }
+            ->findOrFail($id);
         return response()->json($payment);
     }
 
@@ -74,18 +72,17 @@ class PaymentController extends Controller
             'note' => 'nullable|string'
         ]);
 
-        $payment = Payment::where('pharmacy_id', Auth::user()->pharmacy_id)
-            ->findOrFail($id);
+        $payment = Payment::where('user_id', Auth::id())->findOrFail($id);
 
         $supplier = Supplier::where('id', $request->supplier_id)
-            ->where('pharmacy_id', Auth::user()->pharmacy_id)
+            ->where('user_id', Auth::id())
             ->first();
 
         if (!$supplier) {
             return response()->json(['message' => 'Invalid supplier'], 422);
         }
 
-        // Delete old ledger entry
+        // Delete old ledger entries
         $this->deleteLedgerEntries($payment);
 
         $payment->update([
@@ -106,12 +103,9 @@ class PaymentController extends Controller
 
     public function destroy($id)
     {
-        $payment = Payment::where('pharmacy_id', Auth::user()->pharmacy_id)
-            ->findOrFail($id);
-
+        $payment = Payment::where('user_id', Auth::id())->findOrFail($id);
         $this->deleteLedgerEntries($payment);
         $payment->delete();
-
         return response()->json([
             'success' => true,
             'message' => 'Payment deleted successfully'

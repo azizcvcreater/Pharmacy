@@ -1,5 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
-/* eslint-disable no-undef */
 import { createContext, useContext, useState, useEffect } from 'react';
 import api from '../api';
 
@@ -17,9 +15,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const isAdmin = user?.role === 'admin';
-  const isPharmacist = user?.role === 'pharmacist';
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -60,17 +55,16 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ✅ FIXED: now accepts pharmacyName and phone and sends them to backend
-  const register = async (name, email, password, pharmacyName, phone) => {
+  // Register for regular users only (no pharmacy, no role)
+  const register = async (name, email, password, phone = '') => {
     setError(null);
     try {
       const response = await api.post('/register', {
         name,
         email,
         password,
-        pharmacy_name: pharmacyName, // adjust key if your backend uses different naming
-        phone,
-        role: 'pharmacist', // or whatever default role you need
+        phone, // optional
+        // role is not sent – backend should default to 'user'
       });
       const { token, user } = response.data;
       localStorage.setItem('token', token);
@@ -103,8 +97,6 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
-    isAdmin,
-    isPharmacist,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

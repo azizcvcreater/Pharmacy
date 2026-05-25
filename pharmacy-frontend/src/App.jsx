@@ -2,7 +2,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
-import RoleBasedRoute from './components/RoleBasedRoute';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import StockIndex from './pages/medicines/StockIndex';
@@ -16,12 +15,7 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
-import Pharmacy from './pages/pharmacy/Pharmacy';
-import User from './pages/users/User';
-import Setting from './pages/Setting';
-import { SettingsProvider } from './context/SettingsContext';
-
-// New imports for suppliers and payments
+import User from './pages/users/User'; // Keep for profile management
 import Suppliers from './pages/supplier/Suppliers';
 import Payments from './pages/payment/Payments';
 import SupplierLedger from './pages/supplier/SupplierLedger';
@@ -29,149 +23,64 @@ import SupplierLedger from './pages/supplier/SupplierLedger';
 function App() {
   return (
     <AuthProvider>
-      <SettingsProvider>
-        <BrowserRouter>
-          <Routes>
-            {/* Public routes */}
-            <Route path='/login' element={<Login />} />
-            <Route path='/register' element={<Register />} />
-            <Route path='/forgot-password' element={<ForgotPassword />} />
-            <Route path='/reset-password' element={<ResetPassword />} />
+      <BrowserRouter>
+        <Routes>
+          {/* Public routes */}
+          <Route path='/login' element={<Login />} />
+          <Route path='/register' element={<Register />} />
+          <Route path='/forgot-password' element={<ForgotPassword />} />
+          <Route path='/reset-password' element={<ResetPassword />} />
 
-            {/* Protected routes (authentication required) */}
-            <Route
-              path='/'
-              element={
-                <ProtectedRoute>
-                  <Layout />
-                </ProtectedRoute>
-              }
-            >
-              {/* Admin only */}
-              <Route
-                index
-                element={
-                  <RoleBasedRoute allowedRoles={['admin']}>
-                    <Dashboard />
-                  </RoleBasedRoute>
-                }
-              />
-              <Route
-                path='expense'
-                element={
-                  <RoleBasedRoute allowedRoles={['admin']}>
-                    <ExpensesPage />
-                  </RoleBasedRoute>
-                }
-              />
-              <Route
-                path='tran'
-                element={
-                  <RoleBasedRoute allowedRoles={['admin']}>
-                    <TransactionList />
-                  </RoleBasedRoute>
-                }
-              />
-              <Route
-                path='doc'
-                element={
-                  <RoleBasedRoute allowedRoles={['admin']}>
-                    <Doctor />
-                  </RoleBasedRoute>
-                }
-              />
-              <Route
-                path='setting'
-                element={
-                  <RoleBasedRoute allowedRoles={['admin']}>
-                    <Setting />
-                  </RoleBasedRoute>
-                }
-              />
-              <Route
-                path='user'
-                element={
-                  <RoleBasedRoute allowedRoles={['admin']}>
-                    <User />
-                  </RoleBasedRoute>
-                }
-              />
+          {/* Protected routes – any authenticated user can access all */}
+          <Route
+            path='/'
+            element={
+              <ProtectedRoute>
+                <Layout />
+              </ProtectedRoute>
+            }
+          >
+            {/* Dashboard (index) */}
+            <Route index element={<Dashboard />} />
 
-              {/* Admin and staff */}
-              <Route
-                path='medicine'
-                element={
-                  <RoleBasedRoute allowedRoles={['admin', 'staff']}>
-                    <StockIndex />
-                  </RoleBasedRoute>
-                }
-              />
-              <Route
-                path='purchase'
-                element={
-                  <RoleBasedRoute allowedRoles={['admin', 'staff']}>
-                    <Purchase />
-                  </RoleBasedRoute>
-                }
-              />
-              <Route
-                path='sale'
-                element={
-                  <RoleBasedRoute allowedRoles={['admin', 'staff']}>
-                    <Sale />
-                  </RoleBasedRoute>
-                }
-              />
-              <Route
-                path='items'
-                element={
-                  <RoleBasedRoute allowedRoles={['admin', 'staff']}>
-                    <ItemsCreate />
-                  </RoleBasedRoute>
-                }
-              />
+            {/* Expenses */}
+            <Route path='expense' element={<ExpensesPage />} />
 
-              {/* New routes for suppliers and payments */}
-              <Route
-                path='suppliers'
-                element={
-                  <RoleBasedRoute allowedRoles={['admin', 'staff']}>
-                    <Suppliers />
-                  </RoleBasedRoute>
-                }
-              />
-              <Route
-                path='payments'
-                element={
-                  <RoleBasedRoute allowedRoles={['admin', 'staff']}>
-                    <Payments />
-                  </RoleBasedRoute>
-                }
-              />
-              <Route
-                path='suppliers/:id/ledger'
-                element={
-                  <RoleBasedRoute allowedRoles={['admin', 'staff']}>
-                    <SupplierLedger />
-                  </RoleBasedRoute>
-                }
-              />
+            {/* Transactions */}
+            <Route path='tran' element={<TransactionList />} />
 
-              {/* Super admin only */}
-              <Route
-                path='pharmacy'
-                element={
-                  <RoleBasedRoute allowedRoles={['super_admin']}>
-                    <Pharmacy />
-                  </RoleBasedRoute>
-                }
-              />
-            </Route>
+            {/* Doctors */}
+            <Route path='doc' element={<Doctor />} />
 
-            <Route path='*' element={<Navigate to='/' replace />} />
-          </Routes>
-        </BrowserRouter>
-      </SettingsProvider>
+            {/* User profile */}
+            <Route path='user' element={<User />} />
+
+            {/* Medicines stock */}
+            <Route path='medicine' element={<StockIndex />} />
+
+            {/* Purchases */}
+            <Route path='purchase' element={<Purchase />} />
+
+            {/* Sales */}
+            <Route path='sale' element={<Sale />} />
+
+            {/* Medicine items (catalog) */}
+            <Route path='items' element={<ItemsCreate />} />
+
+            {/* Suppliers */}
+            <Route path='suppliers' element={<Suppliers />} />
+
+            {/* Payments */}
+            <Route path='payments' element={<Payments />} />
+
+            {/* Supplier Ledger */}
+            <Route path='suppliers/:id/ledger' element={<SupplierLedger />} />
+          </Route>
+
+          {/* Catch‑all redirect */}
+          <Route path='*' element={<Navigate to='/' replace />} />
+        </Routes>
+      </BrowserRouter>
     </AuthProvider>
   );
 }

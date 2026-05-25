@@ -6,8 +6,6 @@ import {
   FiMail,
   FiLock,
   FiUserPlus,
-  FiPhone,
-  FiHome,
   FiLoader,
   FiEye,
   FiEyeOff,
@@ -16,8 +14,6 @@ import {
 
 export default function Register() {
   const [name, setName] = useState('');
-  const [pharmacyName, setPharmacyName] = useState('');
-  const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
@@ -32,13 +28,7 @@ export default function Register() {
   const validate = () => {
     const errors = {};
 
-    if (!pharmacyName.trim()) errors.pharmacyName = 'Pharmacy name is required';
-    if (!name.trim()) errors.name = 'Owner name is required';
-    if (!phone.trim()) errors.phone = 'Phone number is required';
-    // Optional: basic Afghan phone validation (accepts +93 or 0 starting)
-    else if (!/^(\+93|0)?\d{9,10}$/.test(phone.replace(/\s/g, '')))
-      errors.phone = 'Enter a valid Afghan phone number (e.g., 0798 123 456)';
-
+    if (!name.trim()) errors.name = 'Full name is required';
     if (!email.trim()) errors.email = 'Email is required';
     else if (!/\S+@\S+\.\S+/.test(email))
       errors.email = 'Please enter a valid email address';
@@ -59,9 +49,7 @@ export default function Register() {
     if (!validate()) return;
 
     setIsSubmitting(true);
-
-    const result = await register(name, email, password, pharmacyName, phone);
-
+    const result = await register(name, email, password); // phone removed
     setIsSubmitting(false);
 
     if (result.success) navigate('/dashboard');
@@ -104,42 +92,16 @@ export default function Register() {
               Create Account
             </h2>
             <p className='text-gray-500 text-sm mt-2'>
-              Join Afghan pharmacies using our platform
+              Join our platform as a regular user
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className='space-y-5'>
-            {/* Pharmacy Name Field - Afghanistan specific placeholder */}
-            <div className='space-y-1'>
-              <label className='text-sm font-medium text-gray-700 flex items-center gap-1'>
-                <FiHome className='text-gray-400 text-sm' />
-                Pharmacy Name
-              </label>
-              <div className='relative group'>
-                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                  <FiHome className='text-gray-400 group-focus-within:text-blue-500 transition-colors' />
-                </div>
-                <input
-                  type='text'
-                  placeholder='e.g., Kabul Medical Store, Ariana Pharmacy'
-                  value={pharmacyName}
-                  onChange={(e) => setPharmacyName(e.target.value)}
-                  className={getInputClasses('pharmacyName')}
-                />
-              </div>
-              {validationErrors.pharmacyName && (
-                <p className='text-red-500 text-xs flex items-center gap-1 mt-1'>
-                  <FiAlertCircle className='text-xs' />
-                  {validationErrors.pharmacyName}
-                </p>
-              )}
-            </div>
-
-            {/* Owner Name Field - Afghan name placeholder */}
+            {/* Full Name */}
             <div className='space-y-1'>
               <label className='text-sm font-medium text-gray-700 flex items-center gap-1'>
                 <FiUser className='text-gray-400 text-sm' />
-                Owner Full Name
+                Full Name
               </label>
               <div className='relative group'>
                 <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
@@ -161,33 +123,7 @@ export default function Register() {
               )}
             </div>
 
-            {/* Phone Field - Afghan phone placeholder */}
-            <div className='space-y-1'>
-              <label className='text-sm font-medium text-gray-700 flex items-center gap-1'>
-                <FiPhone className='text-gray-400 text-sm' />
-                Phone Number (Afghanistan)
-              </label>
-              <div className='relative group'>
-                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                  <FiPhone className='text-gray-400 group-focus-within:text-blue-500 transition-colors' />
-                </div>
-                <input
-                  type='tel'
-                  placeholder='0798 123 456 or +93 79 123 4567'
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className={getInputClasses('phone')}
-                />
-              </div>
-              {validationErrors.phone && (
-                <p className='text-red-500 text-xs flex items-center gap-1 mt-1'>
-                  <FiAlertCircle className='text-xs' />
-                  {validationErrors.phone}
-                </p>
-              )}
-            </div>
-
-            {/* Email Field */}
+            {/* Email */}
             <div className='space-y-1'>
               <label className='text-sm font-medium text-gray-700 flex items-center gap-1'>
                 <FiMail className='text-gray-400 text-sm' />
@@ -199,7 +135,7 @@ export default function Register() {
                 </div>
                 <input
                   type='email'
-                  placeholder='example@pharmacy.af'
+                  placeholder='example@domain.com'
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className={getInputClasses('email')}
@@ -213,7 +149,7 @@ export default function Register() {
               )}
             </div>
 
-            {/* Password Field */}
+            {/* Password */}
             <div className='space-y-1'>
               <label className='text-sm font-medium text-gray-700 flex items-center gap-1'>
                 <FiLock className='text-gray-400 text-sm' />
@@ -246,7 +182,7 @@ export default function Register() {
               )}
             </div>
 
-            {/* Confirm Password Field */}
+            {/* Confirm Password */}
             <div className='space-y-1'>
               <label className='text-sm font-medium text-gray-700 flex items-center gap-1'>
                 <FiLock className='text-gray-400 text-sm' />
@@ -305,7 +241,7 @@ export default function Register() {
               ) : (
                 <>
                   <FiUserPlus />
-                  Create Pharmacy Account
+                  Sign Up
                 </>
               )}
             </button>

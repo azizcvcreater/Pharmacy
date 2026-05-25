@@ -11,7 +11,6 @@ class User extends Authenticatable{
 
 
     protected $fillable = [
-        'pharmacy_id',
         'name',
         'email',
         'password',
@@ -31,9 +30,7 @@ class User extends Authenticatable{
         ];
     }
 
-    public function pharmacy(){
-    return $this->belongsTo(Pharmacy::class);
-    }
+
 
     public function staffPermission()
 {

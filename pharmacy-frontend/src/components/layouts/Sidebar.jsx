@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { FiLogOut, FiSettings } from 'react-icons/fi';
+import { FiLogOut } from 'react-icons/fi';
 import { NavItems } from './NavItems';
 
 export function Sidebar({ sidebarOpen, navItems, user, onLogout }) {
@@ -14,7 +14,9 @@ export function Sidebar({ sidebarOpen, navItems, user, onLogout }) {
       </nav>
 
       <div
-        className={`flex-shrink-0 p-4 border-t border-gray-200/60 bg-gray-50/50 transition-all ${!sidebarOpen ? 'flex flex-col items-center space-y-3' : ''}`}
+        className={`flex-shrink-0 p-4 border-t border-gray-200/60 bg-gray-50/50 transition-all ${
+          !sidebarOpen ? 'flex flex-col items-center space-y-3' : ''
+        }`}
       >
         {sidebarOpen ? (
           <>
@@ -34,15 +36,6 @@ export function Sidebar({ sidebarOpen, navItems, user, onLogout }) {
                   </p>
                 </div>
               </div>
-              {user?.role === 'admin' && (
-                <NavLink
-                  to='/setting'
-                  className='p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600 transition-colors'
-                  title='Settings'
-                >
-                  <FiSettings className='h-5 w-5' />
-                </NavLink>
-              )}
             </div>
             <button
               onClick={onLogout}
@@ -57,15 +50,6 @@ export function Sidebar({ sidebarOpen, navItems, user, onLogout }) {
             <div className='h-8 w-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white text-sm font-medium'>
               {user?.name?.charAt(0) || 'U'}
             </div>
-            {user?.role === 'admin' && (
-              <NavLink
-                to='/setting'
-                className='p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600 transition-colors'
-                title='Settings'
-              >
-                <FiSettings className='h-5 w-5' />
-              </NavLink>
-            )}
             <button
               onClick={onLogout}
               className='p-2 rounded-lg text-red-500 hover:bg-red-50 transition-colors'

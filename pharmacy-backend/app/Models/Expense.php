@@ -8,7 +8,7 @@ class Expense extends Model
 {
     protected $fillable = [
         'user_id',
-        'pharmacy_id',
+        
         'title',
         'amount',
         'note',

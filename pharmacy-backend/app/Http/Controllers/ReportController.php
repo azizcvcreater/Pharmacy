@@ -12,27 +12,27 @@ use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
-    private function pharmacyId()
+    private function userId()
     {
-        return Auth::user()->pharmacy_id;
+        return Auth::id();
     }
 
     public function daily()
     {
-        $pharmacyId = $this->pharmacyId();
+        $userId = $this->userId();
 
         $start = Carbon::today()->subDays(29)->startOfDay();
         $end = Carbon::today()->endOfDay();
 
         // Purchases
-        $purchases = Purchase::where('pharmacy_id', $pharmacyId)
+        $purchases = Purchase::where('user_id', $userId)
             ->whereBetween('purchase_date', [$start, $end])
             ->selectRaw('DATE(purchase_date) as date, SUM(total_amount) as total')
             ->groupBy('date')
             ->pluck('total', 'date');
 
         // Sales
-        $sales = Sale::where('pharmacy_id', $pharmacyId)
+        $sales = Sale::where('user_id', $userId)
             ->whereBetween('sale_date', [$start, $end])
             ->selectRaw('DATE(sale_date) as date, SUM(total_amount) as total')
             ->groupBy('date')
@@ -40,16 +40,16 @@ class ReportController extends Controller
 
         // Profit
         $profit = PurchaseDetail::join('purchases', 'purchases.id', '=', 'purchase_details.purchase_id')
-            ->where('purchases.pharmacy_id', $pharmacyId)
+            ->where('purchases.user_id', $userId)
             ->whereBetween('purchases.purchase_date', [$start, $end])
             ->selectRaw('DATE(purchases.purchase_date) as date, SUM(purchase_details.total_profit) as total')
             ->groupBy('date')
             ->pluck('total', 'date');
 
         // Expenses
-        $expenses = Expense::where('pharmacy_id', $pharmacyId)
-            ->whereBetween('created_at', [$start, $end])
-            ->selectRaw('DATE(created_at) as date, SUM(amount) as total')
+        $expenses = Expense::where('user_id', $userId)
+            ->whereBetween('expense_date', [$start, $end])
+            ->selectRaw('DATE(expense_date) as date, SUM(amount) as total')
             ->groupBy('date')
             ->pluck('total', 'date');
 
@@ -74,21 +74,21 @@ class ReportController extends Controller
 
     public function weekly()
     {
-        $pharmacyId = $this->pharmacyId();
+        $userId = $this->userId();
 
         $start = Carbon::now()->subWeeks(7)->startOfWeek();
         $end = Carbon::now()->endOfWeek();
 
         $formatKey = fn($y, $w) => $y . '-W' . str_pad($w, 2, '0', STR_PAD_LEFT);
 
-        $purchases = Purchase::where('pharmacy_id', $pharmacyId)
+        $purchases = Purchase::where('user_id', $userId)
             ->whereBetween('purchase_date', [$start, $end])
             ->selectRaw('YEAR(purchase_date) y, WEEK(purchase_date, 1) w, SUM(total_amount) total')
             ->groupBy('y', 'w')
             ->get()
             ->mapWithKeys(fn($i) => [$formatKey($i->y, $i->w) => $i->total]);
 
-        $sales = Sale::where('pharmacy_id', $pharmacyId)
+        $sales = Sale::where('user_id', $userId)
             ->whereBetween('sale_date', [$start, $end])
             ->selectRaw('YEAR(sale_date) y, WEEK(sale_date, 1) w, SUM(total_amount) total')
             ->groupBy('y', 'w')
@@ -96,16 +96,16 @@ class ReportController extends Controller
             ->mapWithKeys(fn($i) => [$formatKey($i->y, $i->w) => $i->total]);
 
         $profit = PurchaseDetail::join('purchases', 'purchases.id', '=', 'purchase_details.purchase_id')
-            ->where('purchases.pharmacy_id', $pharmacyId)
+            ->where('purchases.user_id', $userId)
             ->whereBetween('purchases.purchase_date', [$start, $end])
             ->selectRaw('YEAR(purchases.purchase_date) y, WEEK(purchases.purchase_date, 1) w, SUM(purchase_details.total_profit) total')
             ->groupBy('y', 'w')
             ->get()
             ->mapWithKeys(fn($i) => [$formatKey($i->y, $i->w) => $i->total]);
 
-        $expenses = Expense::where('pharmacy_id', $pharmacyId)
-            ->whereBetween('created_at', [$start, $end])
-            ->selectRaw('YEAR(created_at) y, WEEK(created_at, 1) w, SUM(amount) total')
+        $expenses = Expense::where('user_id', $userId)
+            ->whereBetween('expense_date', [$start, $end])
+            ->selectRaw('YEAR(expense_date) y, WEEK(expense_date, 1) w, SUM(amount) total')
             ->groupBy('y', 'w')
             ->get()
             ->mapWithKeys(fn($i) => [$formatKey($i->y, $i->w) => $i->total]);
@@ -135,21 +135,21 @@ class ReportController extends Controller
 
     public function monthly()
     {
-        $pharmacyId = $this->pharmacyId();
+        $userId = $this->userId();
 
         $start = Carbon::today()->subMonths(11)->startOfMonth();
         $end = Carbon::today()->endOfMonth();
 
         $formatKey = fn($y, $m) => $y . '-' . str_pad($m, 2, '0', STR_PAD_LEFT);
 
-        $purchases = Purchase::where('pharmacy_id', $pharmacyId)
+        $purchases = Purchase::where('user_id', $userId)
             ->whereBetween('purchase_date', [$start, $end])
             ->selectRaw('YEAR(purchase_date) y, MONTH(purchase_date) m, SUM(total_amount) total')
             ->groupBy('y', 'm')
             ->get()
             ->mapWithKeys(fn($i) => [$formatKey($i->y, $i->m) => $i->total]);
 
-        $sales = Sale::where('pharmacy_id', $pharmacyId)
+        $sales = Sale::where('user_id', $userId)
             ->whereBetween('sale_date', [$start, $end])
             ->selectRaw('YEAR(sale_date) y, MONTH(sale_date) m, SUM(total_amount) total')
             ->groupBy('y', 'm')
@@ -157,16 +157,16 @@ class ReportController extends Controller
             ->mapWithKeys(fn($i) => [$formatKey($i->y, $i->m) => $i->total]);
 
         $profit = PurchaseDetail::join('purchases', 'purchases.id', '=', 'purchase_details.purchase_id')
-            ->where('purchases.pharmacy_id', $pharmacyId)
+            ->where('purchases.user_id', $userId)
             ->whereBetween('purchases.purchase_date', [$start, $end])
             ->selectRaw('YEAR(purchases.purchase_date) y, MONTH(purchases.purchase_date) m, SUM(purchase_details.total_profit) total')
             ->groupBy('y', 'm')
             ->get()
             ->mapWithKeys(fn($i) => [$formatKey($i->y, $i->m) => $i->total]);
 
-        $expenses = Expense::where('pharmacy_id', $pharmacyId)
-            ->whereBetween('created_at', [$start, $end])
-            ->selectRaw('YEAR(created_at) y, MONTH(created_at) m, SUM(amount) total')
+        $expenses = Expense::where('user_id', $userId)
+            ->whereBetween('expense_date', [$start, $end])
+            ->selectRaw('YEAR(expense_date) y, MONTH(expense_date) m, SUM(amount) total')
             ->groupBy('y', 'm')
             ->get()
             ->mapWithKeys(fn($i) => [$formatKey($i->y, $i->m) => $i->total]);
@@ -193,19 +193,19 @@ class ReportController extends Controller
 
     public function yearly()
     {
-        $pharmacyId = $this->pharmacyId();
+        $userId = $this->userId();
 
         $startYear = Carbon::today()->subYears(4)->year;
         $currentYear = Carbon::today()->year;
 
-        $purchases = Purchase::where('pharmacy_id', $pharmacyId)
+        $purchases = Purchase::where('user_id', $userId)
             ->whereYear('purchase_date', '>=', $startYear)
             ->selectRaw('YEAR(purchase_date) y, SUM(total_amount) total')
             ->groupBy('y')
             ->get()
             ->keyBy('y');
 
-        $sales = Sale::where('pharmacy_id', $pharmacyId)
+        $sales = Sale::where('user_id', $userId)
             ->whereYear('sale_date', '>=', $startYear)
             ->selectRaw('YEAR(sale_date) y, SUM(total_amount) total')
             ->groupBy('y')
@@ -213,16 +213,16 @@ class ReportController extends Controller
             ->keyBy('y');
 
         $profit = PurchaseDetail::join('purchases', 'purchases.id', '=', 'purchase_details.purchase_id')
-            ->where('purchases.pharmacy_id', $pharmacyId)
+            ->where('purchases.user_id', $userId)
             ->whereYear('purchases.purchase_date', '>=', $startYear)
             ->selectRaw('YEAR(purchases.purchase_date) y, SUM(purchase_details.total_profit) total')
             ->groupBy('y')
             ->get()
             ->keyBy('y');
 
-        $expenses = Expense::where('pharmacy_id', $pharmacyId)
-            ->whereYear('created_at', '>=', $startYear)
-            ->selectRaw('YEAR(created_at) y, SUM(amount) total')
+        $expenses = Expense::where('user_id', $userId)
+            ->whereYear('expense_date', '>=', $startYear)
+            ->selectRaw('YEAR(expense_date) y, SUM(amount) total')
             ->groupBy('y')
             ->get()
             ->keyBy('y');

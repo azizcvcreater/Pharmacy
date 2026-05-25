@@ -8,14 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('doctors', function (Blueprint $table) {
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->decimal('fees', 10, 2)->default(0)->change();
-            $table->decimal('sonography_fee', 10, 2)->nullable()->after('fees');
-            $table->decimal('ecg_fee', 10, 2)->nullable()->after('sonography_fee');
-            $table->decimal('xray_fee', 10, 2)->nullable()->after('ecg_fee');
-            $table->text('description')->nullable()->after('xray_fee');
-        });
+        Schema::create('doctors', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('user_id')->constrained()->onDelete('cascade');
+    $table->decimal('fees', 10, 2)->default(0);
+    $table->decimal('sonography_fee', 10, 2)->nullable();
+    $table->decimal('ecg_fee', 10, 2)->nullable();
+    $table->decimal('xray_fee', 10, 2)->nullable();
+    $table->text('description')->nullable();
+    $table->timestamps();
+});
     }
 
     public function down(): void

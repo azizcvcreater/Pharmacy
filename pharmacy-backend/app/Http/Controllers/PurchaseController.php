@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class PurchaseController extends Controller
 
     public function index(Request $request)
     {
-        $query = Purchase::where('pharmacy_id', Auth::user()->pharmacy_id)
+        $query = Purchase::where('user_id', Auth::id())
             ->with('supplier')
             ->withSum('details', 'total_buyer_price')
             ->withSum('details', 'total_profit')
@@ -33,25 +34,21 @@ class PurchaseController extends Controller
 
     public function show($id)
     {
-        $purchase = Purchase::where('pharmacy_id', Auth::user()->pharmacy_id)
+        $purchase = Purchase::where('user_id', Auth::id())
             ->with('details')
             ->with('supplier')
-            ->find($id);
-
-        if (!$purchase) {
-            return response()->json(['message' => 'Purchase not found'], 404);
-        }
+            ->findOrFail($id);
 
         return response()->json($purchase);
     }
 
     public function formData()
     {
-        $generic = MedicineItem::where('pharmacy_id', Auth::user()->pharmacy_id)->select('generic')->distinct()->get();
-        $brand = MedicineItem::where('pharmacy_id', Auth::user()->pharmacy_id)->select('brand')->distinct()->get();
-        $dosage = MedicineItem::where('pharmacy_id', Auth::user()->pharmacy_id)->select('dosage')->distinct()->get();
-        $strength = MedicineItem::where('pharmacy_id', Auth::user()->pharmacy_id)->select('strength')->distinct()->get();
-        $route = MedicineItem::where('pharmacy_id', Auth::user()->pharmacy_id)->select('route')->distinct()->get();
+        $generic = MedicineItem::where('user_id', Auth::id())->select('generic')->distinct()->get();
+        $brand = MedicineItem::where('user_id', Auth::id())->select('brand')->distinct()->get();
+        $dosage = MedicineItem::where('user_id', Auth::id())->select('dosage')->distinct()->get();
+        $strength = MedicineItem::where('user_id', Auth::id())->select('strength')->distinct()->get();
+        $route = MedicineItem::where('user_id', Auth::id())->select('route')->distinct()->get();
 
         return response()->json([
             'generic' => $generic,
@@ -82,7 +79,7 @@ class PurchaseController extends Controller
         ]);
 
         $supplier = Supplier::where('id', $request->supplier_id)
-            ->where('pharmacy_id', Auth::user()->pharmacy_id)
+            ->where('user_id', Auth::id())
             ->first();
 
         if (!$supplier) {
@@ -102,7 +99,6 @@ class PurchaseController extends Controller
         $purchase = Purchase::create([
             'user_id' => Auth::id(),
             'supplier_id' => $request->supplier_id,
-            'pharmacy_id' => Auth::user()->pharmacy_id,
             'bill_no' => $request->bill_no,
             'purchase_date' => $request->purchase_date,
             'total_amount' => $totalAmount,
@@ -134,7 +130,6 @@ class PurchaseController extends Controller
 
             Medicine::create([
                 'user_id' => Auth::id(),
-                'pharmacy_id' => Auth::user()->pharmacy_id,
                 'supplier_id' => $request->supplier_id,
                 'generic' => $row['generic'],
                 'brand' => $row['brand'],
@@ -181,12 +176,12 @@ class PurchaseController extends Controller
             'medicines.*.expiry_date' => 'nullable|date',
         ]);
 
-        $purchase = Purchase::where('pharmacy_id', Auth::user()->pharmacy_id)
+        $purchase = Purchase::where('user_id', Auth::id())
             ->with('details')
             ->findOrFail($id);
 
         $supplier = Supplier::where('id', $request->supplier_id)
-            ->where('pharmacy_id', Auth::user()->pharmacy_id)
+            ->where('user_id', Auth::id())
             ->first();
 
         if (!$supplier) {
@@ -200,7 +195,6 @@ class PurchaseController extends Controller
         foreach ($purchase->details as $old) {
             $medicine = Medicine::where([
                 'user_id' => Auth::id(),
-                'pharmacy_id' => Auth::user()->pharmacy_id,
                 'supplier_id' => $purchase->supplier_id,
                 'generic' => $old->generic,
                 'brand' => $old->brand,
@@ -266,7 +260,6 @@ class PurchaseController extends Controller
 
             $medicine = Medicine::firstOrCreate([
                 'user_id' => Auth::id(),
-                'pharmacy_id' => Auth::user()->pharmacy_id,
                 'supplier_id' => $request->supplier_id,
                 'generic' => $row['generic'],
                 'brand' => $row['brand'],
@@ -296,7 +289,7 @@ class PurchaseController extends Controller
 
     public function destroy($id)
     {
-        $purchase = Purchase::where('pharmacy_id', Auth::user()->pharmacy_id)
+        $purchase = Purchase::where('user_id', Auth::id())
             ->with('details')
             ->findOrFail($id);
 
@@ -305,7 +298,6 @@ class PurchaseController extends Controller
         foreach ($purchase->details as $detail) {
             $medicine = Medicine::where([
                 'user_id' => Auth::id(),
-                'pharmacy_id' => Auth::user()->pharmacy_id,
                 'supplier_id' => $purchase->supplier_id,
                 'generic' => $detail->generic,
                 'brand' => $detail->brand,
@@ -339,7 +331,8 @@ class PurchaseController extends Controller
         $status = $request->query('status');
 
         $query = Purchase::withSum('details', 'total_buyer_price')
-            ->withSum('details', 'total_profit');
+            ->withSum('details', 'total_profit')
+            ->where('user_id', Auth::id());
 
         if ($status && $status !== 'all') {
             $query->where('payment_status', $status);

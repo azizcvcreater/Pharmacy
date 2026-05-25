@@ -6,15 +6,17 @@ use App\Models\MedicineItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class MedicineItemController extends Controller{
-
-    public function index() {
+class MedicineItemController extends Controller
+{
+    public function index()
+    {
         return response()->json(
-            MedicineItem::where('pharmacy_id', Auth::user()->pharmacy_id)->paginate(3)
+            MedicineItem::where('user_id', Auth::id())->paginate(3)
         );
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $request->validate([
             'generic' => 'required|string|max:255',
             'brand' => 'required|string|max:255',
@@ -25,7 +27,6 @@ class MedicineItemController extends Controller{
 
         $item = MedicineItem::create([
             'user_id' => Auth::id(),
-            'pharmacy_id' => Auth::user()->pharmacy_id,
             'generic' => $request->generic,
             'brand' => $request->brand,
             'dosage' => $request->dosage,
@@ -36,18 +37,17 @@ class MedicineItemController extends Controller{
         return response()->json($item, 201);
     }
 
-    public function destroy($id){
-        $item = MedicineItem::where('pharmacy_id', Auth::user()->pharmacy_id)
-            ->findOrFail($id);
+    public function update(Request $request, $id)
+    {
+        $item = MedicineItem::where('user_id', Auth::id())->findOrFail($id);
 
-        $item->delete();
-
-        return response()->json(['message' => 'Deleted successfully']);
-    }
-
-    public function update(Request $request, $id){
-        $item = MedicineItem::where('pharmacy_id', Auth::user()->pharmacy_id)
-            ->findOrFail($id);
+        $request->validate([
+            'generic' => 'required|string|max:255',
+            'brand' => 'required|string|max:255',
+            'dosage' => 'required|string|max:255',
+            'strength' => 'required|string|max:255',
+            'route' => 'required|string|max:255',
+        ]);
 
         $item->update([
             'generic' => $request->generic,
@@ -58,5 +58,12 @@ class MedicineItemController extends Controller{
         ]);
 
         return response()->json($item);
+    }
+
+    public function destroy($id)
+    {
+        $item = MedicineItem::where('user_id', Auth::id())->findOrFail($id);
+        $item->delete();
+        return response()->json(['message' => 'Deleted successfully']);
     }
 }

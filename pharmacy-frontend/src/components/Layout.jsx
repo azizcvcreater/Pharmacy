@@ -7,7 +7,6 @@ import {
   FiUsers,
   FiChevronLeft,
   FiChevronRight,
-  FiSettings,
 } from 'react-icons/fi';
 import {
   MdDashboard,
@@ -51,60 +50,19 @@ export default function Layout() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [userModalOpen]);
 
-  // Flat navigation items (Settings removed from here – moved to user section)
+  // All navigation items – no role filtering
   const navItems = [
-    { to: '/', icon: MdDashboard, label: 'Dashboard', roles: ['admin'] },
-    { to: '/user', icon: FiUsers, label: 'Users', roles: ['admin'] },
-    { to: '/doc', icon: MdLocalHospital, label: 'Doctor', roles: ['admin'] },
-    {
-      to: '/pharmacy',
-      icon: MdLocalPharmacy,
-      label: 'Pharmacy',
-      roles: ['super_admin'],
-    },
-    {
-      to: '/medicine',
-      icon: FaBoxes,
-      label: 'Stock',
-      roles: ['admin', 'staff'],
-    },
-    {
-      to: '/items',
-      icon: AiOutlinePlusCircle,
-      label: 'Items',
-      roles: ['admin', 'staff'],
-    },
-    {
-      to: '/purchase',
-      icon: FaShoppingCart,
-      label: 'Purchase',
-      roles: ['admin', 'staff'],
-    },
-    {
-      to: '/sale',
-      icon: FaShoppingBag,
-      label: 'Sale',
-      roles: ['admin', 'staff'],
-    },
-    { to: '/expense', icon: MdMoneyOff, label: 'Expense', roles: ['admin'] },
-    {
-      to: '/suppliers',
-      icon: FiUsers,
-      label: 'Suppliers',
-      roles: ['admin'],
-    },
-    {
-      to: '/payments',
-      icon: RiExchangeDollarLine,
-      label: 'Payments',
-      roles: ['admin'],
-    },
+    { to: '/', icon: MdDashboard, label: 'Dashboard' },
+    { to: '/user', icon: FiUsers, label: 'Users' },
+    { to: '/doc', icon: MdLocalHospital, label: 'Doctor' },
+    { to: '/medicine', icon: FaBoxes, label: 'Stock' },
+    { to: '/items', icon: AiOutlinePlusCircle, label: 'Items' },
+    { to: '/purchase', icon: FaShoppingCart, label: 'Purchase' },
+    { to: '/sale', icon: FaShoppingBag, label: 'Sale' },
+    { to: '/expense', icon: MdMoneyOff, label: 'Expense' },
+    { to: '/suppliers', icon: FiUsers, label: 'Suppliers' },
+    { to: '/payments', icon: RiExchangeDollarLine, label: 'Payments' },
   ];
-
-  // Filter items based on user role
-  const filteredItems = navItems.filter((item) =>
-    item.roles.includes(user?.role),
-  );
 
   // Render a single navigation link
   const renderNavLink = (item, collapsed) => (
@@ -169,22 +127,20 @@ export default function Layout() {
                 MediTrack
               </h1>
             </div>
-            {/* Transactions link - only visible to admin */}
-            {user?.role === 'admin' && (
-              <NavLink
-                to='/tran'
-                className={({ isActive }) =>
-                  `flex items-center space-x-2 px-3 py-1.5 rounded-lg text-sm font-medium transition ${
-                    isActive
-                      ? 'bg-indigo-50 text-indigo-700'
-                      : 'text-gray-600 hover:bg-gray-100'
-                  }`
-                }
-              >
-                <RiExchangeDollarLine className='h-5 w-5' />
-                <span className='hidden sm:inline'>Transactions</span>
-              </NavLink>
-            )}
+            {/* Transactions link - now visible to all logged-in users */}
+            <NavLink
+              to='/tran'
+              className={({ isActive }) =>
+                `flex items-center space-x-2 px-3 py-1.5 rounded-lg text-sm font-medium transition ${
+                  isActive
+                    ? 'bg-indigo-50 text-indigo-700'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`
+              }
+            >
+              <RiExchangeDollarLine className='h-5 w-5' />
+              <span className='hidden sm:inline'>Transactions</span>
+            </NavLink>
           </div>
 
           <div className='flex items-center space-x-3'>
@@ -225,18 +181,20 @@ export default function Layout() {
           {/* Scrollable navigation area */}
           <nav className='flex-1 overflow-y-auto p-4 sidebar-scroll'>
             <ul className='space-y-1'>
-              {filteredItems.map((item) => (
+              {navItems.map((item) => (
                 <li key={item.to}>{renderNavLink(item, !sidebarOpen)}</li>
               ))}
             </ul>
           </nav>
 
-          {/* User section - fixed at bottom with Settings and Logout */}
+          {/* User section - fixed at bottom with Logout */}
           <div
-            className={`flex-shrink-0 p-4 border-t border-gray-200/60 bg-gray-50/50 transition-all ${!sidebarOpen ? 'flex flex-col items-center space-y-3' : ''}`}
+            className={`flex-shrink-0 p-4 border-t border-gray-200/60 bg-gray-50/50 transition-all ${
+              !sidebarOpen ? 'flex flex-col items-center space-y-3' : ''
+            }`}
           >
             {sidebarOpen ? (
-              // Expanded sidebar: show full user info + settings + logout
+              // Expanded sidebar: show full user info + logout
               <>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center space-x-3 flex-1'>
@@ -254,16 +212,6 @@ export default function Layout() {
                       </p>
                     </div>
                   </div>
-                  {/* Settings icon (only for admin) */}
-                  {user?.role === 'admin' && (
-                    <NavLink
-                      to='/setting'
-                      className='p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600 transition'
-                      title='Settings'
-                    >
-                      <FiSettings className='h-5 w-5' />
-                    </NavLink>
-                  )}
                 </div>
                 {/* Logout button */}
                 <button
@@ -278,20 +226,11 @@ export default function Layout() {
                 </button>
               </>
             ) : (
-              // Collapsed sidebar: show only avatar + settings icon stacked
+              // Collapsed sidebar: show only avatar + logout icon
               <>
                 <div className='h-8 w-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white text-sm font-medium'>
                   {user?.name?.charAt(0) || 'U'}
                 </div>
-                {user?.role === 'admin' && (
-                  <NavLink
-                    to='/setting'
-                    className='p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-indigo-600 transition'
-                    title='Settings'
-                  >
-                    <FiSettings className='h-5 w-5' />
-                  </NavLink>
-                )}
                 <button
                   onClick={() => {
                     logout();
@@ -325,43 +264,41 @@ export default function Layout() {
                 </button>
               </div>
               <nav className='p-4 flex-1'>
-                {/* Extra Transactions link for admin on mobile */}
-                {user?.role === 'admin' && (
-                  <div className='mb-4'>
-                    <NavLink
-                      to='/tran'
-                      onClick={closeMobileMenu}
-                      className={({ isActive }) =>
-                        `group flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
-                          isActive
-                            ? 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 shadow-sm'
-                            : 'text-gray-600 hover:bg-gray-50 hover:text-indigo-600'
-                        }`
-                      }
-                    >
-                      {({ isActive }) => (
-                        <>
-                          <RiExchangeDollarLine
-                            className={`mr-3 h-5 w-5 ${
-                              isActive ? 'text-indigo-500' : 'text-gray-400'
-                            }`}
-                          />
-                          Transactions
-                          {isActive && (
-                            <span className='ml-auto h-2 w-2 rounded-full bg-indigo-500'></span>
-                          )}
-                        </>
-                      )}
-                    </NavLink>
-                  </div>
-                )}
+                {/* Transactions link for all users on mobile */}
+                <div className='mb-4'>
+                  <NavLink
+                    to='/tran'
+                    onClick={closeMobileMenu}
+                    className={({ isActive }) =>
+                      `group flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
+                        isActive
+                          ? 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 shadow-sm'
+                          : 'text-gray-600 hover:bg-gray-50 hover:text-indigo-600'
+                      }`
+                    }
+                  >
+                    {({ isActive }) => (
+                      <>
+                        <RiExchangeDollarLine
+                          className={`mr-3 h-5 w-5 ${
+                            isActive ? 'text-indigo-500' : 'text-gray-400'
+                          }`}
+                        />
+                        Transactions
+                        {isActive && (
+                          <span className='ml-auto h-2 w-2 rounded-full bg-indigo-500'></span>
+                        )}
+                      </>
+                    )}
+                  </NavLink>
+                </div>
                 <ul className='space-y-1'>
-                  {filteredItems.map((item) => (
+                  {navItems.map((item) => (
                     <li key={item.to}>{renderNavLink(item, false)}</li>
                   ))}
                 </ul>
               </nav>
-              {/* Mobile user section with Settings and Logout */}
+              {/* Mobile user section with logout only */}
               <div className='p-4 border-t border-gray-200/60 bg-gray-50/50'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center space-x-3'>
@@ -379,15 +316,6 @@ export default function Layout() {
                       </p>
                     </div>
                   </div>
-                  {user?.role === 'admin' && (
-                    <NavLink
-                      to='/setting'
-                      onClick={closeMobileMenu}
-                      className='p-2 text-gray-500 hover:text-indigo-600'
-                    >
-                      <FiSettings className='h-5 w-5' />
-                    </NavLink>
-                  )}
                 </div>
                 <button
                   onClick={() => {
@@ -417,7 +345,7 @@ export default function Layout() {
         © {new Date().getFullYear()} MediTrack. All rights reserved.
       </footer>
 
-      {/* User Modal (optional, kept for compatibility) */}
+      {/* User Modal */}
       {userModalOpen && user && (
         <>
           <div

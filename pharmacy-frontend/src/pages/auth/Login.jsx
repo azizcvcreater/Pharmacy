@@ -1,3 +1,4 @@
+// Login.jsx (unchanged except for context usage – no roles needed)
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';

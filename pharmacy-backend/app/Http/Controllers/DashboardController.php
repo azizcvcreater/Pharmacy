@@ -9,38 +9,37 @@ use App\Models\PurchaseDetail;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
-class DashboardController extends Controller{
-
-    public function index(){
-        $user = Auth::user();
-        if (!$user || !$user->pharmacy_id) {
-            return response()->json(['error' => 'Unauthorized or missing pharmacy'], 401);
+class DashboardController extends Controller
+{
+    public function index()
+    {
+        $userId = Auth::id();
+        if (!$userId) {
+            return response()->json(['error' => 'Unauthenticated'], 401);
         }
 
-        $pharmacyId = $user->pharmacy_id;
-
-        // Purchases – filter by pharmacy_id via the purchase relation
-        $totalPurchases = PurchaseDetail::whereHas('purchase', function ($q) use ($pharmacyId) {
-            $q->where('pharmacy_id', $pharmacyId);
+        // Purchases – assuming PurchaseDetail belongs to a purchase that has user_id
+        $totalPurchases = PurchaseDetail::whereHas('purchase', function ($q) use ($userId) {
+            $q->where('user_id', $userId);
         })->sum('total_buyer_price');
 
-        $totalProfit = PurchaseDetail::whereHas('purchase', function ($q) use ($pharmacyId) {
-            $q->where('pharmacy_id', $pharmacyId);
+        $totalProfit = PurchaseDetail::whereHas('purchase', function ($q) use ($userId) {
+            $q->where('user_id', $userId);
         })->sum('total_profit');
 
-        // Expenses – directly filter by pharmacy_id
-        $totalExpenses = Expense::where('pharmacy_id', $pharmacyId)->sum('amount');
+        // Expenses
+        $totalExpenses = Expense::where('user_id', $userId)->sum('amount');
 
         $netProfit = $totalProfit - $totalExpenses;
 
-        // Medicines
-        $lowStock = Medicine::where('pharmacy_id', $pharmacyId)
+        // Medicines low stock (quantity < 100 and > 0)
+        $lowStock = Medicine::where('user_id', $userId)
             ->where('quantity', '>', 0)
             ->where('quantity', '<', 100)
             ->get();
 
-        // Near expiry
-        $nearExpiry = Medicine::where('pharmacy_id', $pharmacyId)
+        // Near expiry (next 45 days)
+        $nearExpiry = Medicine::where('user_id', $userId)
             ->whereNotNull('expiry_date')
             ->where('quantity', '>', 0)
             ->whereBetween('expiry_date', [
@@ -51,10 +50,10 @@ class DashboardController extends Controller{
             ->get(['id', 'generic', 'expiry_date', 'quantity as stock_quantity']);
 
         // Doctor totals
-        $totalConsultationFees = Doctor::where('pharmacy_id', $pharmacyId)->sum('fees');
-        $totalSonographyFees   = Doctor::where('pharmacy_id', $pharmacyId)->sum('sonography_fee');
-        $totalEcgFees          = Doctor::where('pharmacy_id', $pharmacyId)->sum('ecg_fee');
-        $totalXrayFees         = Doctor::where('pharmacy_id', $pharmacyId)->sum('xray_fee');
+        $totalConsultationFees = Doctor::where('user_id', $userId)->sum('fees');
+        $totalSonographyFees   = Doctor::where('user_id', $userId)->sum('sonography_fee');
+        $totalEcgFees          = Doctor::where('user_id', $userId)->sum('ecg_fee');
+        $totalXrayFees         = Doctor::where('user_id', $userId)->sum('xray_fee');
 
         $totalDoctorIncome = $totalConsultationFees + $totalSonographyFees + $totalEcgFees + $totalXrayFees;
 

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('ledgers', function (Blueprint $table) {
         $table->id();
         $table->foreignId('supplier_id')->constrained()->cascadeOnDelete();
-        $table->foreignId('pharmacy_id')->constrained()->cascadeOnDelete();
+    
 
         $table->string('type'); // purchase / payment
         $table->decimal('amount', 10, 2); // + or -

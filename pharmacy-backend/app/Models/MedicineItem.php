@@ -8,7 +8,7 @@ class MedicineItem extends Model
 {
     protected $fillable = [
         'user_id',
-        'pharmacy_id',
+        
         'generic',
         'brand',
         'dosage',

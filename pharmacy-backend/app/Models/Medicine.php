@@ -9,7 +9,7 @@ class Medicine extends Model
 protected $fillable = [
     'user_id',
     'supplier_id',
-    'pharmacy_id',
+    
     'generic',
     'brand',
     'dosage',

@@ -9,7 +9,7 @@ class Purchase extends Model
   protected $fillable = [
     'user_id',
     'supplier_id',
-    'pharmacy_id',
+
     'bill_no',
     'purchase_date',
     'total_amount',

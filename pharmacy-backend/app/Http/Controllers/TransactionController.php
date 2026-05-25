@@ -6,49 +6,49 @@ use App\Models\Doctor;
 use App\Models\Sale;
 use App\Models\Purchase;
 use App\Models\Expense;
-use App\Models\Medicine;
 use Illuminate\Support\Facades\Auth;
 
-class TransactionController extends Controller{
+class TransactionController extends Controller
+{
+    public function index()
+    {
+        $userId = Auth::id();
 
-   public function index(){
-    $pharmacyId = Auth::user()->pharmacy_id;
-
-    $sales = Sale::where('pharmacy_id', $pharmacyId)->latest()->get()->map(function ($sale) {
-        return [
-            'type' => 'sale',
-            'id' => $sale->id,
-            'amount' => $sale->total_amount ?? 0,
-            'description' => 'Sale Bill: ' . $sale->bill_no,
-            'date' => $sale->sale_date ?? $sale->created_at,
-        ];
-    });
-
-    $purchases = Purchase::where('pharmacy_id', $pharmacyId)
-        ->with('Details')
-        ->latest()
-        ->get()
-        ->map(function ($purchase) {
+        $sales = Sale::where('user_id', $userId)->latest()->get()->map(function ($sale) {
             return [
-                'type' => 'purchase',
-                'id' => $purchase->id,
-                'amount' => $purchase->Details->sum('total_buyer_price'),
-                'description' => 'Purchase #' . $purchase->id,
-                'date' => $purchase->created_at,
+                'type' => 'sale',
+                'id' => $sale->id,
+                'amount' => $sale->total_amount ?? 0,
+                'description' => 'Sale Bill: ' . $sale->bill_no,
+                'date' => $sale->sale_date ?? $sale->created_at,
             ];
         });
 
-    $expenses = Expense::where('pharmacy_id', $pharmacyId)->latest()->get()->map(function ($expense) {
-        return [
-            'type' => 'expense',
-            'id' => $expense->id,
-            'amount' => $expense->amount ?? 0,
-            'description' => 'Expense: ' . ($expense->note ?? $expense->title),
-            'date' => $expense->expense_date ?? $expense->created_at,
-        ];
-    });
+        $purchases = Purchase::where('user_id', $userId)
+            ->with('details')
+            ->latest()
+            ->get()
+            ->map(function ($purchase) {
+                return [
+                    'type' => 'purchase',
+                    'id' => $purchase->id,
+                    'amount' => $purchase->details->sum('total_buyer_price'),
+                    'description' => 'Purchase #' . $purchase->id,
+                    'date' => $purchase->created_at,
+                ];
+            });
 
-        $doctors = Doctor::where('pharmacy_id', $pharmacyId)
+        $expenses = Expense::where('user_id', $userId)->latest()->get()->map(function ($expense) {
+            return [
+                'type' => 'expense',
+                'id' => $expense->id,
+                'amount' => $expense->amount ?? 0,
+                'description' => 'Expense: ' . ($expense->note ?? $expense->title),
+                'date' => $expense->expense_date ?? $expense->created_at,
+            ];
+        });
+
+        $doctors = Doctor::where('user_id', $userId)
             ->latest()
             ->get()
             ->map(function ($doctor) {
@@ -74,15 +74,14 @@ class TransactionController extends Controller{
                 ];
             });
 
-    $transactions = collect()
-        ->merge($sales)
-        ->merge($purchases)
-        ->merge($expenses)
-        ->merge($doctors)
-        ->sortByDesc('date')
-        ->values();
+        $transactions = collect()
+            ->merge($sales)
+            ->merge($purchases)
+            ->merge($expenses)
+            ->merge($doctors)
+            ->sortByDesc('date')
+            ->values();
 
-    return response()->json($transactions);
-}
-
+        return response()->json($transactions);
+    }
 }

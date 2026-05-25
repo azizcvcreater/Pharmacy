@@ -9,8 +9,8 @@ class Ledger extends Model
 {
     protected $fillable = [
         'supplier_id',
-        'pharmacy_id',
-        'type',    
+
+        'type',
         'amount',
         'reference_id',
         'reference_type',
