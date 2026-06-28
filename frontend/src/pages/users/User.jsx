@@ -33,34 +33,37 @@ export default function User() {
     setToast({ show: true, message, type });
   };
 
-  const fetchUsers = async () => {
+  // Fetch staff belonging to the logged‑in admin
+  const fetchStaff = async () => {
     setLoading(true);
     try {
-      const res = await api.get('/users');
+      const res = await api.get('/staff');
+      // Backend returns { data: [...] }
       setUsers(res.data.data || res.data);
     } catch (error) {
-      console.error('Error fetching users:', error);
-      showToast('Failed to load users', 'error');
+      console.error('Error fetching staff:', error);
+      showToast('Failed to load staff', 'error');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchUsers();
+    fetchStaff();
   }, []);
 
+  // Filter staff by search term (name or email)
   const filteredUsers = useMemo(() => {
-    const staffOnly = users.filter((user) => user.role === 'staff');
-    if (!searchTerm.trim()) return staffOnly;
+    if (!searchTerm.trim()) return users;
     const term = searchTerm.toLowerCase();
-    return staffOnly.filter(
+    return users.filter(
       (user) =>
         user.name.toLowerCase().includes(term) ||
         user.email.toLowerCase().includes(term),
     );
   }, [users, searchTerm]);
 
+  // Paginate filtered users
   const paginatedUsers = useMemo(() => {
     const start = (currentPage - 1) * perPage;
     return filteredUsers.slice(start, start + perPage);
@@ -74,14 +77,15 @@ export default function User() {
     setCurrentPage(1);
   }, [searchTerm]);
 
+  // Create staff – backend sets role='staff' and admin_id automatically
   const handleCreateSubmit = async (formData) => {
     try {
-      await api.post('/users', { ...formData, role: 'staff' });
+      await api.post('/staff', formData);
       showToast('Staff user created successfully!', 'success');
       setShowCreate(false);
-      fetchUsers();
+      fetchStaff();
     } catch (error) {
-      const msg = error.response?.data?.message || 'Failed to create user';
+      const msg = error.response?.data?.message || 'Failed to create staff';
       showToast(msg, 'error');
     }
   };
@@ -91,21 +95,23 @@ export default function User() {
     setShowEdit(true);
   };
 
+  // Update staff – password is optional
   const handleEditSubmit = async (formData) => {
     try {
       const payload = {
         name: formData.name,
         email: formData.email,
-        role: 'staff',
       };
-      if (formData.password.trim()) payload.password = formData.password;
-      await api.put(`/users/${selectedUser.id}`, payload);
+      if (formData.password && formData.password.trim()) {
+        payload.password = formData.password;
+      }
+      await api.put(`/staff/${selectedUser.id}`, payload);
       showToast('Staff user updated successfully!', 'success');
       setShowEdit(false);
       setSelectedUser(null);
-      fetchUsers();
+      fetchStaff();
     } catch (error) {
-      const msg = error.response?.data?.message || 'Failed to update user';
+      const msg = error.response?.data?.message || 'Failed to update staff';
       showToast(msg, 'error');
     }
   };
@@ -118,13 +124,13 @@ export default function User() {
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
     try {
-      await api.delete(`/users/${deleteTarget.id}`);
+      await api.delete(`/staff/${deleteTarget.id}`);
       showToast('Staff user deleted successfully!', 'success');
       setShowDeleteConfirm(false);
       setDeleteTarget(null);
-      fetchUsers();
+      fetchStaff();
     } catch (error) {
-      showToast('Failed to delete user', 'error');
+      showToast('Failed to delete staff', 'error');
     }
   };
 

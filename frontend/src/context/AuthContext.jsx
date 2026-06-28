@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect } from 'react';
 import api from '../api';
 
@@ -5,9 +6,7 @@ const AuthContext = createContext();
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 };
 
@@ -31,11 +30,34 @@ export const AuthProvider = ({ children }) => {
       const response = await api.get('/user');
       setUser(response.data.user);
     } catch (err) {
-      console.error('Failed to fetch user', err);
+      console.error('Fetch user error', err);
       localStorage.removeItem('token');
       delete api.defaults.headers.common['Authorization'];
     } finally {
       setLoading(false);
+    }
+  };
+
+  const register = async (name, email, password) => {
+    setError(null);
+    try {
+      const response = await api.post('/register', {
+        name,
+        email,
+        password,
+      });
+      const { token, user } = response.data;
+      localStorage.setItem('token', token);
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      setUser(user);
+      return { success: true };
+    } catch (err) {
+      console.error('Registration error:', err);
+      let message = 'Registration failed. Please try again.';
+      if (err.response?.data?.message) message = err.response.data.message;
+      else if (err.request) message = 'Cannot connect to server.';
+      setError(message);
+      return { success: false, error: message };
     }
   };
 
@@ -49,30 +71,11 @@ export const AuthProvider = ({ children }) => {
       setUser(user);
       return { success: true };
     } catch (err) {
-      const message = err.response?.data?.message || 'Login failed';
-      setError(message);
-      return { success: false, error: message };
-    }
-  };
-
-  // Register for regular users only (no pharmacy, no role)
-  const register = async (name, email, password, phone = '') => {
-    setError(null);
-    try {
-      const response = await api.post('/register', {
-        name,
-        email,
-        password,
-        phone, // optional
-        // role is not sent – backend should default to 'user'
-      });
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUser(user);
-      return { success: true };
-    } catch (err) {
-      const message = err.response?.data?.message || 'Registration failed';
+      console.error('Login error:', err);
+      let message = 'Login failed. Please check your credentials.';
+      if (err.response?.data?.message) message = err.response.data.message;
+      else if (err.request)
+        message = 'Cannot connect to server. Make sure Laravel is running.';
       setError(message);
       return { success: false, error: message };
     }
@@ -90,14 +93,18 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const value = {
-    user,
-    loading,
-    error,
-    login,
-    register,
-    logout,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        error,
+        register,
+        login,
+        logout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };

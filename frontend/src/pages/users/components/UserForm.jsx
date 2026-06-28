@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FiEye, FiEyeOff } from 'react-icons/fi'; // add eye icons
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 export function UserForm({
   user,
@@ -15,7 +15,7 @@ export function UserForm({
     email: '',
     password: '',
   });
-  const [showPassword, setShowPassword] = useState(false); // track visibility
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (user) {

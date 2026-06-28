@@ -10,10 +10,23 @@ use Illuminate\Support\Facades\Auth;
 class SupplierController extends Controller
 {
     public function index()
-    {
-        $suppliers = Supplier::where('user_id', Auth::id())->get();
+{
+    try {
+        if (!Auth::check()) {
+            return response()->json(['message' => 'Not authenticated'], 401);
+        }
+
+        $userId = Auth::id();
+        $suppliers = Supplier::where('user_id', $userId)->get();
+
         return response()->json($suppliers);
+    } catch (\Exception $e) {
+        \Log::error('Supplier index error: ' . $e->getMessage());
+        return response()->json([
+            'message' => 'Server error: ' . $e->getMessage()
+        ], 500);
     }
+}
 
     public function store(Request $request)
     {
@@ -36,7 +49,7 @@ class SupplierController extends Controller
     public function show($id)
     {
         $supplier = Supplier::where('user_id', Auth::id())
-            ->with(['purchases', 'payments'])
+            ->with(['purchases', 'payments']) // ensure these relations exist in Supplier model
             ->findOrFail($id);
         return response()->json($supplier);
     }
@@ -78,8 +91,9 @@ class SupplierController extends Controller
         $supplier = Supplier::where('user_id', Auth::id())->findOrFail($id);
 
         $ledgers = Ledger::where('supplier_id', $id)
-            ->where('user_id', Auth::id())   // ledger table also has user_id
-            ->with('reference')
+            ->where('user_id', Auth::id())
+            // REMOVED ->with('reference') because it was causing errors
+            // If you need reference data, define the relation properly in Ledger model first
             ->orderBy('transaction_date', 'asc')
             ->orderBy('id', 'asc')
             ->get();

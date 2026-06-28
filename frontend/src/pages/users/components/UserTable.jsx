@@ -1,4 +1,3 @@
-// components/UserTable.jsx
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 
 export function UserTable({ users, currentPage, perPage, onEdit, onDelete }) {
