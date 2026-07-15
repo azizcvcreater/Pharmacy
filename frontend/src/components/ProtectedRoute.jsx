@@ -1,21 +1,30 @@
+// src/components/ProtectedRoute.jsx
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LoadingSpinner } from './LoadingSpinner';
+import { useTranslation } from '../hooks/useTranslation';
+import LoadingSpinner from './common/LoadingSpinner';
 
-export default function ProtectedRoute({ children }) {
-  const { user, loading } = useAuth();
+const ProtectedRoute = ({ children, requiredRole }) => {
+  const { t } = useTranslation();
+  const { isAuthenticated, loading, user } = useAuth();
 
   if (loading) {
     return (
-      <div className='min-h-screen flex items-center justify-center'>
-        <LoadingSpinner />
+      <div className="flex items-center justify-center h-screen">
+        <LoadingSpinner size="lg" text={t('common.loading')} />
       </div>
     );
   }
 
-  if (!user) {
-    return <Navigate to='/login' replace />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (requiredRole && user?.role !== requiredRole) {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return children;
-}
+};
+
+export default ProtectedRoute;

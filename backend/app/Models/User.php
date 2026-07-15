@@ -9,7 +9,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
         'name',
@@ -17,6 +17,7 @@ class User extends Authenticatable
         'password',
         'role',
         'admin_id',
+        'profile_image',
     ];
 
     protected $hidden = [
@@ -24,46 +25,44 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected function casts(): array
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
+
+    public function getProfileImageUrlAttribute()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        if ($this->profile_image) {
+            return asset('storage/profile-images/' . $this->profile_image);
+        }
+        return null;
     }
 
-
-    public function staff()
+    public function isAdmin(): bool
     {
-        return $this->hasMany(User::class, 'admin_id');
+        return $this->role === 'admin';
     }
 
+    public function isStaff(): bool
+    {
+        return $this->role === 'staff';
+    }
 
+    // Relationship: Admin who created this staff member
     public function admin()
     {
         return $this->belongsTo(User::class, 'admin_id');
     }
 
-    public function staffPermission()
+    // Relationship: Staff members created by this admin
+    public function staffMembers()
     {
-        return $this->hasOne(StaffPermission::class, 'staff_id');
+        return $this->hasMany(User::class, 'admin_id');
     }
 
-
-    public function scopeStaffOf($query, $adminId)
+    // Relationship: Medicines created by this admin
+    public function medicines()
     {
-        return $query->where('admin_id', $adminId)
-                     ->where('role', 'staff');
-    }
-
-
-    public function isAdmin()
-    {
-        return $this->role === 'admin';
-    }
-
-    public function isStaff()
-    {
-        return $this->role === 'staff';
+        return $this->hasMany(Medicine::class, 'admin_id');
     }
 }

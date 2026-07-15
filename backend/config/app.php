@@ -65,8 +65,7 @@ return [
     |
     */
 
-    // 'timezone' => 'UTC',
-    'timezone' => 'Asia/Kabul',  // For Afghanistan
+    'timezone' => 'UTC',
 
     /*
     |--------------------------------------------------------------------------

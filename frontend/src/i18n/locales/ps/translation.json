@@ -1,0 +1,433 @@
+{
+  "common": {
+    "loading": "ت بارېدو...",
+    "save": "خوندي کول",
+    "cancel": "لغوه کول",
+    "delete": "ړنګول",
+    "edit": "سمول",
+    "view": "کتل",
+    "close": "تړل",
+    "confirm": "تایید",
+    "search": "لټون...",
+    "noResults": "کومه پایله ونه موندل شوه",
+    "retry": "بیا هڅه",
+    "back": "شاته",
+    "next": "وروسته",
+    "previous": "مخکې",
+    "actions": "کړنې",
+    "status": "حالت",
+    "date": "نېټه",
+    "amount": "مقدار",
+    "total": "ټول",
+    "balance": "باقي",
+    "paid": "تادیه شوی",
+    "unpaid": "نه دی تادیه شوی",
+    "partial": "نیمګړی",
+    "all": "ټول",
+    "refresh": "تازه کول",
+    "export": "صادرول",
+    "import": "واردول",
+    "print": "چاپول",
+    "download": "ډاونلوډ"
+  },
+  "auth": {
+    "login": "ننوتل",
+    "register": "ثبت نام",
+    "logout": "وتل",
+    "email": "بریښنالیک",
+    "password": "پټ نوم",
+    "confirmPassword": "پټ نوم تایید",
+    "fullName": "بشپړ نوم",
+    "rememberMe": "ما په یاد ولره",
+    "forgotPassword": "پټ نوم هیر شو؟",
+    "noAccount": "حساب نلرئ؟",
+    "haveAccount": "له قبل حساب لرئ؟",
+    "createAccount": "حساب جوړ کړئ",
+    "signIn": "ننوځئ",
+    "welcomeBack": "ښه راغلاست",
+    "invalidCredentials": "بریښنالیک یا پټ نوم ناسم دی. بیا هڅه وکړئ.",
+    "registrationSuccess": "ثبت نام بریالی شو!",
+    "loginSuccess": "ننوتل بریالي شول!",
+    "logoutSuccess": "وتل بریالي شول!"
+  },
+  "dashboard": {
+    "title": "لومړی پاڼه",
+    "welcome": "ښه راغلاست، {{name}}! 👋",
+    "subtitle": "دا هغه څه دي چې نن ستاسو په درملتون کې پیښیږي",
+    "totalSales": "ټول پلور",
+    "totalPurchases": "ټول پیرود",
+    "grossProfit": "ناخالصه ګټه",
+    "totalExpenses": "ټول لګښتونه",
+    "medicines": "درمل",
+    "suppliers": "تامینونکي",
+    "users": "کاروونکي",
+    "staff": "کارمندان",
+    "outOfStock": "په ذخیره کې نشته",
+    "lowStock": "کمه ذخیره",
+    "todaySales": "د نن ورځې پلور",
+    "weeklySales": "د دې اونۍ پلور",
+    "monthlySales": "د دې میاشتې پلور",
+    "totalCredit": "ټول کریډیټ (تاسو پور لرئ)",
+    "totalDebit": "ټول ډیبیټ (تاسو ته پور لري)",
+    "recentActivities": "وروستي فعالیتونه",
+    "quickActions": "چټکې کړنې",
+    "expired": "تاریخ تیر شوی",
+    "nearExpiry": "نژدې تاریخ تیریدو",
+    "transactions": "معاملې",
+    "purchases": "پیرود",
+    "payments": "تادیه",
+    "viewReports": "راپورونه وګورئ",
+    "addStaff": "کارمند ورزیات کړئ",
+    "addMedicine": "درمل ورزیات کړئ",
+    "addSupplier": "تامینونکی ورزیات کړئ",
+    "newSale": "نوی پلور",
+    "newPurchase": "نوی پیرود",
+    "recordPayment": "تادیه ثبت کړئ"
+  },
+  "medicines": {
+    "title": "د درملو مدیریت",
+    "subtitle": "د ذخیرې تعقیب سره خپل د درملو لیست اداره کړئ",
+    "add": "درمل ورزیات کړئ",
+    "edit": "درمل سم کړئ",
+    "delete": "درمل ړنګ کړئ",
+    "deleteConfirm": "آیا تاسو ډاډه یاست چې غواړئ {{name}} ړنګ کړئ؟",
+    "deleteWarning": "دا کړنه بیرته نه ګرځي. دا به درمل د ټولو پیرودونو او پلورونو څخه هم لیرې کړي.",
+    "searchPlaceholder": "د عام نوم، برانډ، یا لارې له مخې لټون وکړئ...",
+    "noResults": "کوم درمل ونه موندل شول. د خپل لومړي درمل په اضافه کولو سره پیل وکړئ!",
+    "fields": {
+      "generic": "عام نوم",
+      "brand": "برانډ نوم",
+      "dosage": "خوراک",
+      "strength": "قوت (mg)",
+      "route": "لاره",
+      "stock": "د ذخیرې شمېر",
+      "purchasePrice": "د پیرود بیه",
+      "sellingPrice": "د پلور بیه",
+      "expiryDate": "د ختمیدو نېټه",
+      "batchNumber": "د لړ شمېره"
+    },
+    "status": {
+      "inStock": "په ذخیره کې",
+      "lowStock": "کمه ذخیره",
+      "outOfStock": "په ذخیره کې نشته"
+    },
+    "expiry": {
+      "valid": "سم دی",
+      "nearExpiry": "نژدې ختمیدو",
+      "expired": "تاریخ تیر شوی",
+      "noDate": "نېټه نشته"
+    }
+  },
+  "suppliers": {
+    "title": "د تامینونکو مدیریت",
+    "subtitle": "خپل تامینونکي اداره کړئ او تادیه تعقیب کړئ",
+    "add": "تامینونکی ورزیات کړئ",
+    "edit": "تامینونکی سم کړئ",
+    "delete": "تامینونکی ړنګ کړئ",
+    "deleteConfirm": "آیا تاسو ډاډه یاست چې غواړئ {{name}} ړنګ کړئ؟",
+    "deleteWarning": "دا کړنه بیرته نه ګرځي. د تامینونکي ټول معلومات به په دایمي توګه لیرې شي.",
+    "searchPlaceholder": "د نوم، تلیفون، یا پتې له مخې تامینونکي لټون وکړئ...",
+    "noResults": "کوم تامینونکی ونه موندل شو. د خپل لومړي تامینونکي په اضافه کولو سره پیل وکړئ!",
+    "fields": {
+      "name": "د تامینونکي نوم",
+      "phone": "تلیفون شمېره",
+      "address": "پته"
+    },
+    "statistics": {
+      "totalSuppliers": "ټول تامینونکي",
+      "totalPurchases": "ټول پیرود",
+      "totalPaid": "ټول تادیه شوي",
+      "totalBalance": "ټول باقي",
+      "credit": "کریډیټ (تاسو پور لرئ)",
+      "debit": "ډیبیټ (تاسو ته پور لري)",
+      "balanced": "متوازن"
+    },
+    "payments": {
+      "title": "د تادیې تاریخ",
+      "record": "نوې تادیه ثبت کړئ",
+      "amount": "مقدار",
+      "date": "د تادیې نېټه",
+      "method": "د تادیې طریقه",
+      "reference": "حواله شمېره",
+      "notes": "یادښتونه",
+      "noPayments": "د دې تامینونکي لپاره کومه تادیه ثبت شوې نه ده",
+      "totalPaid": "ټول تادیه شوي"
+    }
+  },
+  "sales": {
+    "title": "پلور",
+    "subtitle": "د تادیې تعقیب سره پلور اداره کړئ",
+    "new": "نوی پلور",
+    "edit": "پلور سم کړئ",
+    "delete": "پلور ړنګ کړئ",
+    "deleteConfirm": "آیا تاسو ډاډه یاست چې غواړئ پلور {{invoice}} ړنګ کړئ؟",
+    "deleteWarning": "دا کړنه بیرته نه ګرځي. ذخیره به بیرته راستانه شي.",
+    "searchPlaceholder": "د فاکتور، ناروغ، یا ډاکټر له مخې لټون وکړئ...",
+    "noResults": "کوم پلور ونه موندل شو. د خپل لومړي پلور د جوړولو لپاره 'نوی پلور' کلیک وکړئ!",
+    "fields": {
+      "date": "د پلور نېټه",
+      "type": "د پلور ډول",
+      "prescription": "د نسخې سره",
+      "nonPrescription": "OTC",
+      "prescriptionNumber": "د نسخې شمېره",
+      "doctorName": "د ډاکټر نوم",
+      "doctorFees": "د ډاکټر معاش",
+      "patientName": "د ناروغ نوم",
+      "patientPhone": "د ناروغ تلیفون",
+      "prescriptionImage": "د نسخې انځور",
+      "items": "توکي",
+      "subtotal": "ټول فرعي",
+      "discount": "تخفیف",
+      "tax": "مالیه",
+      "total": "ټول",
+      "paidAmount": "تادیه شوی مقدار",
+      "notes": "یادښتونه"
+    },
+    "payment": {
+      "title": "تادیه ورزیات کړئ",
+      "amount": "د تادیې مقدار",
+      "date": "د تادیې نېټه",
+      "method": "د تادیې طریقه",
+      "reference": "حواله شمېره",
+      "notes": "یادښتونه"
+    },
+    "statistics": {
+      "totalSales": "ټول پلور",
+      "totalPaid": "ټول تادیه شوي",
+      "totalBalance": "ټول باقي",
+      "doctorFees": "د ډاکټر معاش",
+      "prescriptions": "نسخې"
+    },
+    "status": {
+      "paid": "تادیه شوی",
+      "partial": "نیمګړی",
+      "unpaid": "نه دی تادیه شوی"
+    }
+  },
+  "purchases": {
+    "title": "پیرود",
+    "subtitle": "د تامینونکو پیرود او تادیات اداره کړئ",
+    "new": "نوی پیرود",
+    "edit": "پیرود سم کړئ",
+    "delete": "پیرود ړنګ کړئ",
+    "deleteConfirm": "آیا تاسو ډاډه یاست چې غواړئ پیرود {{invoice}} ړنګ کړئ؟",
+    "deleteWarning": "دا کړنه بیرته نه ګرځي.",
+    "searchPlaceholder": "د فاکتور یا تامینونکي له مخې لټون وکړئ...",
+    "noResults": "کوم پیرود ونه موندل شو. د خپل لومړي پیرود د جوړولو لپاره 'نوی پیرود' کلیک وکړئ!",
+    "fields": {
+      "supplier": "تامینونکی",
+      "date": "د پیرود نېټه",
+      "dueDate": "د پای نېټه",
+      "items": "توکي",
+      "subtotal": "ټول فرعي",
+      "discount": "تخفیف",
+      "tax": "مالیه",
+      "total": "ټول",
+      "notes": "یادښتونه"
+    },
+    "payment": {
+      "title": "تادیه ورزیات کړئ",
+      "amount": "د تادیې مقدار",
+      "date": "د تادیې نېټه",
+      "method": "د تادیې طریقه",
+      "reference": "حواله شمېره",
+      "notes": "یادښتونه",
+      "balanceDue": "باقي پاتې"
+    },
+    "statistics": {
+      "totalPurchases": "ټول پیرود",
+      "totalPaid": "ټول تادیه شوي",
+      "totalBalance": "ټول باقي"
+    }
+  },
+  "payments": {
+    "title": "د تامینونکو تادیات",
+    "subtitle": "د تامینونکو تادیات اداره کړئ",
+    "record": "تادیه ثبت کړئ",
+    "edit": "تادیه سم کړئ",
+    "delete": "تادیه ړنګ کړئ",
+    "deleteConfirm": "آیا تاسو ډاډه یاست چې غواړئ د {{amount}} تادیه {{supplier}} ته ړنګ کړئ؟",
+    "deleteWarning": "دا کړنه بیرته نه ګرځي.",
+    "searchPlaceholder": "تادیات لټون وکړئ...",
+    "noResults": "کومه تادیه ثبت شوې نه ده. د خپل لومړي تادیې د ثبتولو لپاره 'تادیه ثبت کړئ' کلیک وکړئ!",
+    "fields": {
+      "supplier": "تامینونکی",
+      "amount": "مقدار",
+      "date": "د تادیې نېټه",
+      "method": "د تادیې طریقه",
+      "reference": "حواله شمېره",
+      "notes": "یادښتونه"
+    },
+    "statistics": {
+      "totalPayments": "ټول تادیات",
+      "totalAmount": "ټول تادیه شوي مقدار",
+      "suppliers": "تامینونکي"
+    },
+    "methods": {
+      "cash": "نقد",
+      "bankTransfer": "بانکي لېږد",
+      "check": "چیک",
+      "creditCard": "کریډیټ کارت",
+      "online": "آنلاین"
+    }
+  },
+  "expenses": {
+    "title": "د لګښتونو مدیریت",
+    "subtitle": "ټول سوداګریز لګښتونه تعقیب او اداره کړئ",
+    "add": "لګښت ورزیات کړئ",
+    "edit": "لګښت سم کړئ",
+    "delete": "لګښت ړنګ کړئ",
+    "deleteConfirm": "آیا تاسو ډاډه یاست چې غواړئ {{title}} ړنګ کړئ؟",
+    "deleteWarning": "دا کړنه بیرته نه ګرځي.",
+    "searchPlaceholder": "د عنوان یا توضیحاتو له مخې لګښتونه لټون وکړئ...",
+    "noResults": "هیڅ لګښت ستاسو فلټرونو سره سمون نه خوري",
+    "fields": {
+      "title": "عنوان",
+      "amount": "مقدار",
+      "date": "د لګښت نېټه",
+      "category": "کټګوري",
+      "description": "توضیحات",
+      "receipt": "د رسید انځور"
+    },
+    "categories": {
+      "rent": "کرایه",
+      "utilities": "اساسي اسانتیاوې",
+      "salary": "معاش",
+      "inventory": "ذخیره",
+      "maintenance": "ساتنه",
+      "marketing": "مارکېټینګ",
+      "transport": "ترانسپورت",
+      "insurance": "بیمه",
+      "tax": "مالیه",
+      "other": "نور"
+    },
+    "statistics": {
+      "totalExpenses": "ټول لګښتونه",
+      "numberOfExpenses": "د لګښتونو شمېر",
+      "period": "موده",
+      "categories": "کټګورۍ",
+      "expensesByCategory": "د کټګورۍ له مخې لګښتونه"
+    }
+  },
+  "expiry": {
+    "title": "د ختمیدو تعقیب",
+    "subtitle": "د درملو د ختمیدو نېټې او د ذخیرې کچې څارنه وکړئ",
+    "refresh": "تازه کول",
+    "searchPlaceholder": "د عام نوم، برانډ، یا لړ له مخې لټون وکړئ...",
+    "noResults": "کوم درمل ستاسو لټون سره سمون نه خوري",
+    "filters": {
+      "all": "ټول درمل",
+      "expired": "تاریخ تیر شوی",
+      "nearExpiry": "نژدې ختمیدو (≤۳۰ ورځې)"
+    },
+    "statistics": {
+      "totalMedicines": "ټول درمل",
+      "valid": "سم دي",
+      "nearExpiry": "نژدې ختمیدو",
+      "expired": "تاریخ تیر شوی"
+    },
+    "alerts": {
+      "expired": "⚠️ {{count}} درمل{{plural}} تاریخ تیر شوی!",
+      "expiredMessage": "مهرباني وکړئ سمدستي د تاریخ تیر شوي درمل بیاکتنه او له منځه یوسي.",
+      "nearExpiry": "⚠️ {{count}} درمل{{plural}} نژدې ختمیدو!",
+      "nearExpiryMessage": "د دې توکو د پلور یا بیرته ستنولو په اړه فکر وکړئ مخکې له دې چې تاریخ یې تیر شي."
+    },
+    "fields": {
+      "medicine": "درمل",
+      "batch": "د لړ شمېره",
+      "stock": "ذخیره",
+      "expiryDate": "د ختمیدو نېټه",
+      "daysUntil": "د ختمیدو پورې ورځې",
+      "sellingPrice": "د پلور بیه"
+    }
+  },
+  "reports": {
+    "title": "د ګټې او زیان راپور",
+    "subtitle": "د خپل سوداګرۍ فعالیت تعقیب کړئ",
+    "refresh": "تازه کول",
+    "export": "صادرول",
+    "period": "موده",
+    "year": "کال",
+    "month": "میاشت",
+    "totalSales": "ټول پلور",
+    "totalPurchases": "ټول پیرود",
+    "grossProfit": "ناخالصه ګټه",
+    "netProfit": "خالصه ګټه",
+    "expenses": "لګښتونه",
+    "revenueBreakdown": "د عاید ویش",
+    "expensesByCategory": "د کټګورۍ له مخې لګښتونه",
+    "periodBreakdown": "د مودې ویش",
+    "transactions": "معاملې",
+    "purchasesCount": "پیرود",
+    "expensesCount": "لګښتونه",
+    "noData": "د دې مودې لپاره کوم معلومات شتون نلري",
+    "beforeExpenses": "د لګښتونو دمخه",
+    "afterExpenses": "د لګښتونو وروسته"
+  },
+  "profile": {
+    "title": "پروفایل",
+    "edit": "پروفایل سم کړئ",
+    "save": "بدلونونه خوندي کړئ",
+    "cancel": "لغوه کول",
+    "personalInfo": "شخصي معلومات",
+    "fullName": "بشپړ نوم",
+    "email": "بریښنالیک",
+    "changePassword": "پټ نوم بدل کړئ",
+    "hidePassword": "د پټ نوم بدلون پټ کړئ",
+    "newPassword": "نوی پټ نوم",
+    "confirmNewPassword": "نوی پټ نوم تایید کړئ",
+    "passwordMatch": "✓ پټ نومونه سمون خوري",
+    "passwordMismatch": "✗ پټ نومونه سمون نه خوري",
+    "role": {
+      "admin": "مدیر",
+      "staff": "کارمند"
+    },
+    "uploadImage": "د پروفایل انځور (اختیاري)"
+  },
+  "users": {
+    "title": "د کاروونکو مدیریت",
+    "subtitle": "په خپل سیسټم کې ټول کاروونکي اداره کړئ",
+    "addStaff": "کارمند ورزیات کړئ",
+    "edit": "کاروونکی سم کړئ",
+    "delete": "کاروونکی ړنګ کړئ",
+    "deleteConfirm": "آیا تاسو ډاډه یاست چې غواړئ {{name}} ړنګ کړئ؟",
+    "deleteWarning": "دا کړنه بیرته نه ګرځي. د دې کارونکي سره تړلي ټول معلومات به په دایمي توګه لیرې شي.",
+    "searchPlaceholder": "د نوم یا بریښنالیک له مخې کاروونکي لټون وکړئ...",
+    "noResults": "کوم کاروونکی ونه موندل شو. د خپل لومړي کارمند د جوړولو لپاره 'کارمند ورزیات کړئ' کلیک وکړئ!",
+    "fields": {
+      "name": "بشپړ نوم",
+      "email": "بریښنالیک",
+      "role": "رول",
+      "password": "نوی پټ نوم (اختیاري)",
+      "passwordHint": "پټ نوم خالي پریږدئ ترڅو اوسنی پاتې شي"
+    },
+    "roles": {
+      "all": "ټول رولونه",
+      "admin": "مدیران",
+      "staff": "کارمندان"
+    },
+    "statistics": {
+      "totalUsers": "ټول کاروونکي",
+      "administrators": "مدیران",
+      "staffMembers": "کارمندان"
+    },
+    "createdBy": "توسط",
+    "joined": "ورګډ شوی",
+    "self": "ځان",
+    "you": "(تاسو)"
+  },
+  "errors": {
+    "generic": "یوه ستونزه رامنځ ته شوه. مهرباني وکړئ بیا هڅه وکړئ.",
+    "network": "د شبکې ستونزه. مهرباني وکړئ خپله اړیکه وګورئ.",
+    "unauthorized": "تاسو د دې کړنې ترسره کولو اجازه نلرئ.",
+    "notFound": "سرچینه ونه موندل شوه.",
+    "validation": "مهرباني وکړئ خپل معلومات وګورئ او بیا هڅه وکړئ.",
+    "serverError": "د سرور ستونزه. مهرباني وکړئ وروسته بیا هڅه وکړئ."
+  },
+  "success": {
+    "saved": "بریالی خوندي شو!",
+    "updated": "بریالی تازه شو!",
+    "deleted": "بریالی ړنګ شو!",
+    "created": "بریالی جوړ شو!"
+  }
+}

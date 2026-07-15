@@ -1,0 +1,433 @@
+{
+  "common": {
+    "loading": "در حال بارگذاری...",
+    "save": "ذخیره",
+    "cancel": "لغو",
+    "delete": "حذف",
+    "edit": "ویرایش",
+    "view": "مشاهده",
+    "close": "بستن",
+    "confirm": "تأیید",
+    "search": "جستجو...",
+    "noResults": "نتیجه‌ای یافت نشد",
+    "retry": "تلاش مجدد",
+    "back": "بازگشت",
+    "next": "بعدی",
+    "previous": "قبلی",
+    "actions": "عملیات",
+    "status": "وضعیت",
+    "date": "تاریخ",
+    "amount": "مبلغ",
+    "total": "مجموع",
+    "balance": "مانده",
+    "paid": "پرداخت شده",
+    "unpaid": "پرداخت نشده",
+    "partial": "ناقص",
+    "all": "همه",
+    "refresh": "بروزرسانی",
+    "export": "خروجی",
+    "import": "ورودی",
+    "print": "چاپ",
+    "download": "دانلود"
+  },
+  "auth": {
+    "login": "ورود",
+    "register": "ثبت نام",
+    "logout": "خروج",
+    "email": "آدرس ایمیل",
+    "password": "رمز عبور",
+    "confirmPassword": "تأیید رمز عبور",
+    "fullName": "نام کامل",
+    "rememberMe": "مرا به خاطر بسپار",
+    "forgotPassword": "رمز عبور را فراموش کرده‌اید؟",
+    "noAccount": "حساب کاربری ندارید؟",
+    "haveAccount": "قبلاً حساب کاربری دارید؟",
+    "createAccount": "ایجاد حساب کاربری",
+    "signIn": "ورود",
+    "welcomeBack": "خوش آمدید",
+    "invalidCredentials": "ایمیل یا رمز عبور اشتباه است. لطفاً دوباره تلاش کنید.",
+    "registrationSuccess": "ثبت نام با موفقیت انجام شد!",
+    "loginSuccess": "ورود با موفقیت انجام شد!",
+    "logoutSuccess": "خروج با موفقیت انجام شد!"
+  },
+  "dashboard": {
+    "title": "داشبورد",
+    "welcome": "خوش آمدید، {{name}}! 👋",
+    "subtitle": "این چیزی است که امروز در داروخانه شما اتفاق می‌افتد",
+    "totalSales": "کل فروش",
+    "totalPurchases": "کل خرید",
+    "grossProfit": "سود ناخالص",
+    "totalExpenses": "کل هزینه‌ها",
+    "medicines": "داروها",
+    "suppliers": "تأمین‌کنندگان",
+    "users": "کاربران",
+    "staff": "کارکنان",
+    "outOfStock": "تمام شده",
+    "lowStock": "موجودی کم",
+    "todaySales": "فروش امروز",
+    "weeklySales": "فروش این هفته",
+    "monthlySales": "فروش این ماه",
+    "totalCredit": "کل اعتبار (بدهکارید)",
+    "totalDebit": "کل بدهی (به شما بدهکارند)",
+    "recentActivities": "فعالیت‌های اخیر",
+    "quickActions": "عملیات سریع",
+    "expired": "منقضی شده",
+    "nearExpiry": "نزدیک به انقضا",
+    "transactions": "تراکنش‌ها",
+    "purchases": "خریدها",
+    "payments": "پرداخت‌ها",
+    "viewReports": "مشاهده گزارش‌ها",
+    "addStaff": "افزودن کارمند",
+    "addMedicine": "افزودن دارو",
+    "addSupplier": "افزودن تأمین‌کننده",
+    "newSale": "فروش جدید",
+    "newPurchase": "خرید جدید",
+    "recordPayment": "ثبت پرداخت"
+  },
+  "medicines": {
+    "title": "مدیریت داروها",
+    "subtitle": "مدیریت موجودی داروها با ردیابی موجودی",
+    "add": "افزودن دارو",
+    "edit": "ویرایش دارو",
+    "delete": "حذف دارو",
+    "deleteConfirm": "آیا مطمئن هستید که می‌خواهید {{name}} را حذف کنید؟",
+    "deleteWarning": "این عمل قابل بازگشت نیست. این دارو از تمام خریدها و فروش‌ها نیز حذف خواهد شد.",
+    "searchPlaceholder": "جستجو بر اساس نام عمومی، برند، یا مسیر...",
+    "noResults": "هیچ دارویی یافت نشد. با افزودن اولین داروی خود شروع کنید!",
+    "fields": {
+      "generic": "نام عمومی",
+      "brand": "نام برند",
+      "dosage": "دوز",
+      "strength": "قدرت (mg)",
+      "route": "مسیر",
+      "stock": "تعداد موجودی",
+      "purchasePrice": "قیمت خرید",
+      "sellingPrice": "قیمت فروش",
+      "expiryDate": "تاریخ انقضا",
+      "batchNumber": "شماره بچ"
+    },
+    "status": {
+      "inStock": "موجود",
+      "lowStock": "موجودی کم",
+      "outOfStock": "تمام شده"
+    },
+    "expiry": {
+      "valid": "معتبر",
+      "nearExpiry": "نزدیک به انقضا",
+      "expired": "منقضی شده",
+      "noDate": "بدون تاریخ"
+    }
+  },
+  "suppliers": {
+    "title": "مدیریت تأمین‌کنندگان",
+    "subtitle": "مدیریت تأمین‌کنندگان و پیگیری پرداخت‌ها",
+    "add": "افزودن تأمین‌کننده",
+    "edit": "ویرایش تأمین‌کننده",
+    "delete": "حذف تأمین‌کننده",
+    "deleteConfirm": "آیا مطمئن هستید که می‌خواهید {{name}} را حذف کنید؟",
+    "deleteWarning": "این عمل قابل بازگشت نیست. تمام اطلاعات تأمین‌کننده به طور دائمی حذف خواهد شد.",
+    "searchPlaceholder": "جستجوی تأمین‌کنندگان بر اساس نام، تلفن، یا آدرس...",
+    "noResults": "هیچ تأمین‌کننده‌ای یافت نشد. برای ایجاد اولین تأمین‌کننده خود روی 'افزودن تأمین‌کننده' کلیک کنید!",
+    "fields": {
+      "name": "نام تأمین‌کننده",
+      "phone": "شماره تلفن",
+      "address": "آدرس"
+    },
+    "statistics": {
+      "totalSuppliers": "کل تأمین‌کنندگان",
+      "totalPurchases": "کل خریدها",
+      "totalPaid": "کل پرداخت شده",
+      "totalBalance": "کل مانده",
+      "credit": "اعتبار (به آنها بدهکارید)",
+      "debit": "بدهی (به شما بدهکارند)",
+      "balanced": "متوازن"
+    },
+    "payments": {
+      "title": "تاریخچه پرداخت‌ها",
+      "record": "ثبت پرداخت جدید",
+      "amount": "مبلغ",
+      "date": "تاریخ پرداخت",
+      "method": "روش پرداخت",
+      "reference": "شماره مرجع",
+      "notes": "یادداشت‌ها",
+      "noPayments": "هیچ پرداختی برای این تأمین‌کننده ثبت نشده است",
+      "totalPaid": "کل پرداخت شده"
+    }
+  },
+  "sales": {
+    "title": "فروش",
+    "subtitle": "مدیریت فروش با ردیابی پرداخت",
+    "new": "فروش جدید",
+    "edit": "ویرایش فروش",
+    "delete": "حذف فروش",
+    "deleteConfirm": "آیا مطمئن هستید که می‌خواهید فروش {{invoice}} را حذف کنید؟",
+    "deleteWarning": "این عمل قابل بازگشت نیست. موجودی بازیابی خواهد شد.",
+    "searchPlaceholder": "جستجو بر اساس فاکتور، بیمار، یا پزشک...",
+    "noResults": "هیچ فروشی یافت نشد. برای ایجاد اولین فروش خود روی 'فروش جدید' کلیک کنید!",
+    "fields": {
+      "date": "تاریخ فروش",
+      "type": "نوع فروش",
+      "prescription": "با نسخه",
+      "nonPrescription": "OTC",
+      "prescriptionNumber": "شماره نسخه",
+      "doctorName": "نام پزشک",
+      "doctorFees": "هزینه پزشک",
+      "patientName": "نام بیمار",
+      "patientPhone": "تلفن بیمار",
+      "prescriptionImage": "تصویر نسخه",
+      "items": "اقلام",
+      "subtotal": "جمع جزئی",
+      "discount": "تخفیف",
+      "tax": "مالیات",
+      "total": "مجموع",
+      "paidAmount": "مبلغ پرداخت شده",
+      "notes": "یادداشت‌ها"
+    },
+    "payment": {
+      "title": "افزودن پرداخت",
+      "amount": "مبلغ پرداخت",
+      "date": "تاریخ پرداخت",
+      "method": "روش پرداخت",
+      "reference": "شماره مرجع",
+      "notes": "یادداشت‌ها"
+    },
+    "statistics": {
+      "totalSales": "کل فروش",
+      "totalPaid": "کل پرداخت شده",
+      "totalBalance": "کل مانده",
+      "doctorFees": "هزینه پزشک",
+      "prescriptions": "نسخه‌ها"
+    },
+    "status": {
+      "paid": "پرداخت شده",
+      "partial": "ناقص",
+      "unpaid": "پرداخت نشده"
+    }
+  },
+  "purchases": {
+    "title": "خریدها",
+    "subtitle": "مدیریت خریدها و پرداخت‌های تأمین‌کنندگان",
+    "new": "خرید جدید",
+    "edit": "ویرایش خرید",
+    "delete": "حذف خرید",
+    "deleteConfirm": "آیا مطمئن هستید که می‌خواهید خرید {{invoice}} را حذف کنید؟",
+    "deleteWarning": "این عمل قابل بازگشت نیست.",
+    "searchPlaceholder": "جستجو بر اساس فاکتور یا تأمین‌کننده...",
+    "noResults": "هیچ خریدی یافت نشد. برای ایجاد اولین خرید خود روی 'خرید جدید' کلیک کنید!",
+    "fields": {
+      "supplier": "تأمین‌کننده",
+      "date": "تاریخ خرید",
+      "dueDate": "تاریخ سررسید",
+      "items": "اقلام",
+      "subtotal": "جمع جزئی",
+      "discount": "تخفیف",
+      "tax": "مالیات",
+      "total": "مجموع",
+      "notes": "یادداشت‌ها"
+    },
+    "payment": {
+      "title": "افزودن پرداخت",
+      "amount": "مبلغ پرداخت",
+      "date": "تاریخ پرداخت",
+      "method": "روش پرداخت",
+      "reference": "شماره مرجع",
+      "notes": "یادداشت‌ها",
+      "balanceDue": "مانده بدهی"
+    },
+    "statistics": {
+      "totalPurchases": "کل خریدها",
+      "totalPaid": "کل پرداخت شده",
+      "totalBalance": "کل مانده"
+    }
+  },
+  "payments": {
+    "title": "پرداخت‌های تأمین‌کنندگان",
+    "subtitle": "مدیریت پرداخت‌های تأمین‌کنندگان",
+    "record": "ثبت پرداخت",
+    "edit": "ویرایش پرداخت",
+    "delete": "حذف پرداخت",
+    "deleteConfirm": "آیا مطمئن هستید که می‌خواهید پرداخت {{amount}} به {{supplier}} را حذف کنید؟",
+    "deleteWarning": "این عمل قابل بازگشت نیست.",
+    "searchPlaceholder": "جستجوی پرداخت‌ها...",
+    "noResults": "هیچ پرداختی ثبت نشده است. برای ثبت اولین پرداخت خود روی 'ثبت پرداخت' کلیک کنید!",
+    "fields": {
+      "supplier": "تأمین‌کننده",
+      "amount": "مبلغ",
+      "date": "تاریخ پرداخت",
+      "method": "روش پرداخت",
+      "reference": "شماره مرجع",
+      "notes": "یادداشت‌ها"
+    },
+    "statistics": {
+      "totalPayments": "کل پرداخت‌ها",
+      "totalAmount": "کل مبلغ پرداخت شده",
+      "suppliers": "تأمین‌کنندگان"
+    },
+    "methods": {
+      "cash": "نقدی",
+      "bankTransfer": "انتقال بانکی",
+      "check": "چک",
+      "creditCard": "کارت اعتباری",
+      "online": "آنلاین"
+    }
+  },
+  "expenses": {
+    "title": "مدیریت هزینه‌ها",
+    "subtitle": "ردیابی و مدیریت تمام هزینه‌های کسب و کار",
+    "add": "افزودن هزینه",
+    "edit": "ویرایش هزینه",
+    "delete": "حذف هزینه",
+    "deleteConfirm": "آیا مطمئن هستید که می‌خواهید {{title}} را حذف کنید؟",
+    "deleteWarning": "این عمل قابل بازگشت نیست.",
+    "searchPlaceholder": "جستجوی هزینه‌ها بر اساس عنوان یا توضیحات...",
+    "noResults": "هیچ هزینه‌ای با فیلترهای شما مطابقت ندارد",
+    "fields": {
+      "title": "عنوان",
+      "amount": "مبلغ",
+      "date": "تاریخ هزینه",
+      "category": "دسته‌بندی",
+      "description": "توضیحات",
+      "receipt": "تصویر رسید"
+    },
+    "categories": {
+      "rent": "اجاره",
+      "utilities": "خدمات",
+      "salary": "حقوق",
+      "inventory": "موجودی",
+      "maintenance": "نگهداری",
+      "marketing": "بازاریابی",
+      "transport": "حمل و نقل",
+      "insurance": "بیمه",
+      "tax": "مالیات",
+      "other": "سایر"
+    },
+    "statistics": {
+      "totalExpenses": "کل هزینه‌ها",
+      "numberOfExpenses": "تعداد هزینه‌ها",
+      "period": "دوره",
+      "categories": "دسته‌بندی‌ها",
+      "expensesByCategory": "هزینه‌ها بر اساس دسته‌بندی"
+    }
+  },
+  "expiry": {
+    "title": "ردیابی انقضا",
+    "subtitle": "نظارت بر تاریخ انقضای داروها و سطح موجودی",
+    "refresh": "بروزرسانی",
+    "searchPlaceholder": "جستجو بر اساس نام عمومی، برند، یا بچ...",
+    "noResults": "هیچ دارویی با جستجوی شما مطابقت ندارد",
+    "filters": {
+      "all": "همه داروها",
+      "expired": "منقضی شده",
+      "nearExpiry": "نزدیک به انقضا (≤۳۰ روز)"
+    },
+    "statistics": {
+      "totalMedicines": "کل داروها",
+      "valid": "معتبر",
+      "nearExpiry": "نزدیک به انقضا",
+      "expired": "منقضی شده"
+    },
+    "alerts": {
+      "expired": "⚠️ {{count}} دارو{{plural}} منقضی شده است!",
+      "expiredMessage": "لطفاً فوراً داروهای منقضی شده را بررسی و دور بریزید.",
+      "nearExpiry": "⚠️ {{count}} دارو{{plural}} نزدیک به انقضا است!",
+      "nearExpiryMessage": "قبل از انقضا، فروش یا بازگرداندن این اقلام را در نظر بگیرید."
+    },
+    "fields": {
+      "medicine": "دارو",
+      "batch": "شماره بچ",
+      "stock": "موجودی",
+      "expiryDate": "تاریخ انقضا",
+      "daysUntil": "روز تا انقضا",
+      "sellingPrice": "قیمت فروش"
+    }
+  },
+  "reports": {
+    "title": "گزارش سود و زیان",
+    "subtitle": "پیگیری عملکرد کسب و کار شما",
+    "refresh": "بروزرسانی",
+    "export": "خروجی",
+    "period": "دوره",
+    "year": "سال",
+    "month": "ماه",
+    "totalSales": "کل فروش",
+    "totalPurchases": "کل خرید",
+    "grossProfit": "سود ناخالص",
+    "netProfit": "سود خالص",
+    "expenses": "هزینه‌ها",
+    "revenueBreakdown": "تجزیه درآمد",
+    "expensesByCategory": "هزینه‌ها بر اساس دسته‌بندی",
+    "periodBreakdown": "تجزیه دوره",
+    "transactions": "تراکنش‌ها",
+    "purchasesCount": "خریدها",
+    "expensesCount": "هزینه‌ها",
+    "noData": "هیچ داده‌ای برای این دوره در دسترس نیست",
+    "beforeExpenses": "قبل از هزینه‌ها",
+    "afterExpenses": "بعد از هزینه‌ها"
+  },
+  "profile": {
+    "title": "پروفایل",
+    "edit": "ویرایش پروفایل",
+    "save": "ذخیره تغییرات",
+    "cancel": "لغو",
+    "personalInfo": "اطلاعات شخصی",
+    "fullName": "نام کامل",
+    "email": "آدرس ایمیل",
+    "changePassword": "تغییر رمز عبور",
+    "hidePassword": "مخفی کردن تغییر رمز عبور",
+    "newPassword": "رمز عبور جدید",
+    "confirmNewPassword": "تأیید رمز عبور جدید",
+    "passwordMatch": "✓ رمزهای عبور مطابقت دارند",
+    "passwordMismatch": "✗ رمزهای عبور مطابقت ندارند",
+    "role": {
+      "admin": "مدیر",
+      "staff": "کارمند"
+    },
+    "uploadImage": "تصویر پروفایل (اختیاری)"
+  },
+  "users": {
+    "title": "مدیریت کاربران",
+    "subtitle": "مدیریت تمام کاربران در سیستم شما",
+    "addStaff": "افزودن کارمند",
+    "edit": "ویرایش کاربر",
+    "delete": "حذف کاربر",
+    "deleteConfirm": "آیا مطمئن هستید که می‌خواهید {{name}} را حذف کنید؟",
+    "deleteWarning": "این عمل قابل بازگشت نیست. تمام داده‌های مرتبط با این کاربر به طور دائمی حذف خواهد شد.",
+    "searchPlaceholder": "جستجوی کاربران بر اساس نام یا ایمیل...",
+    "noResults": "هیچ کاربری یافت نشد. برای ایجاد اولین کارمند خود روی 'افزودن کارمند' کلیک کنید!",
+    "fields": {
+      "name": "نام کامل",
+      "email": "آدرس ایمیل",
+      "role": "نقش",
+      "password": "رمز عبور جدید (اختیاری)",
+      "passwordHint": "برای حفظ رمز عبور فعلی، فیلد رمز عبور را خالی بگذارید"
+    },
+    "roles": {
+      "all": "همه نقش‌ها",
+      "admin": "مدیران",
+      "staff": "کارمندان"
+    },
+    "statistics": {
+      "totalUsers": "کل کاربران",
+      "administrators": "مدیران",
+      "staffMembers": "کارمندان"
+    },
+    "createdBy": "ایجاد شده توسط",
+    "joined": "عضویت",
+    "self": "خود",
+    "you": "(شما)"
+  },
+  "errors": {
+    "generic": "خطایی رخ داد. لطفاً دوباره تلاش کنید.",
+    "network": "خطای شبکه. لطفاً اتصال خود را بررسی کنید.",
+    "unauthorized": "شما اجازه انجام این عمل را ندارید.",
+    "notFound": "منبع مورد نظر یافت نشد.",
+    "validation": "لطفاً ورودی خود را بررسی کرده و دوباره تلاش کنید.",
+    "serverError": "خطای سرور. لطفاً بعداً دوباره تلاش کنید."
+  },
+  "success": {
+    "saved": "با موفقیت ذخیره شد!",
+    "updated": "با موفقیت بروزرسانی شد!",
+    "deleted": "با موفقیت حذف شد!",
+    "created": "با موفقیت ایجاد شد!"
+  }
+}

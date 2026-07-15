@@ -1,110 +1,138 @@
-/* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useState, useEffect } from 'react';
-import api from '../api';
+// src/context/AuthContext.jsx
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import API from '../api';
 
 const AuthContext = createContext();
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within an AuthProvider');
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
   return context;
 };
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('token') || null);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      fetchUser();
-    } else {
+    const loadUser = async () => {
+      if (token) {
+        try {
+          const response = await API.get('/me');
+          setUser(response.data);
+          localStorage.setItem('user', JSON.stringify(response.data));
+          localStorage.setItem('userRole', response.data.role);
+        } catch (error) {
+          console.error('Error loading user:', error);
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          localStorage.removeItem('userRole');
+          setToken(null);
+          setUser(null);
+        }
+      }
       setLoading(false);
-    }
-  }, []);
+    };
 
-  const fetchUser = async () => {
-    try {
-      const response = await api.get('/user');
-      setUser(response.data.user);
-    } catch (err) {
-      console.error('Fetch user error', err);
-      localStorage.removeItem('token');
-      delete api.defaults.headers.common['Authorization'];
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const register = async (name, email, password) => {
-    setError(null);
-    try {
-      const response = await api.post('/register', {
-        name,
-        email,
-        password,
-      });
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUser(user);
-      return { success: true };
-    } catch (err) {
-      console.error('Registration error:', err);
-      let message = 'Registration failed. Please try again.';
-      if (err.response?.data?.message) message = err.response.data.message;
-      else if (err.request) message = 'Cannot connect to server.';
-      setError(message);
-      return { success: false, error: message };
-    }
-  };
+    loadUser();
+  }, [token]);
 
   const login = async (email, password) => {
-    setError(null);
     try {
-      const response = await api.post('/login', { email, password });
-      const { token, user } = response.data;
+      const response = await API.post('/login', { email, password });
+      const { token, user, role, profile_image_url } = response.data;
+      
       localStorage.setItem('token', token);
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUser(user);
-      return { success: true };
-    } catch (err) {
-      console.error('Login error:', err);
-      let message = 'Login failed. Please check your credentials.';
-      if (err.response?.data?.message) message = err.response.data.message;
-      else if (err.request)
-        message = 'Cannot connect to server. Make sure Laravel is running.';
-      setError(message);
-      return { success: false, error: message };
+      localStorage.setItem('userRole', role);
+      const userData = { ...user, profile_image_url };
+      localStorage.setItem('user', JSON.stringify(userData));
+      
+      setToken(token);
+      setUser(userData);
+      
+      return { success: true, user: userData };
+    } catch (error) {
+      return { 
+        success: false, 
+        error: error.response?.data?.message || 'Login failed' 
+      };
+    }
+  };
+
+  const register = async (userData) => {
+    try {
+      const formData = new FormData();
+      Object.keys(userData).forEach(key => {
+        if (key === 'profile_image' && userData[key]) {
+          formData.append(key, userData[key]);
+        } else if (key !== 'profile_image') {
+          formData.append(key, userData[key]);
+        }
+      });
+
+      const response = await API.post('/register', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      
+      const { token, user, role, profile_image_url } = response.data;
+      
+      localStorage.setItem('token', token);
+      localStorage.setItem('userRole', role);
+      const userDataWithImage = { ...user, profile_image_url };
+      localStorage.setItem('user', JSON.stringify(userDataWithImage));
+      
+      setToken(token);
+      setUser(userDataWithImage);
+      
+      return { success: true, user: userDataWithImage };
+    } catch (error) {
+      return { 
+        success: false, 
+        error: error.response?.data?.message || 'Registration failed' 
+      };
     }
   };
 
   const logout = async () => {
     try {
-      await api.post('/logout');
-    } catch (err) {
-      console.error('Logout error', err);
+      await API.post('/logout');
+    } catch (error) {
+      // Silent fail
     } finally {
       localStorage.removeItem('token');
-      delete api.defaults.headers.common['Authorization'];
+      localStorage.removeItem('user');
+      localStorage.removeItem('userRole');
+      setToken(null);
       setUser(null);
     }
   };
 
+  const updateUser = (userData) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
+
+  const value = {
+    user,
+    loading,
+    token,
+    login,
+    register,
+    logout,
+    updateUser,
+    isAuthenticated: !!token && !!user,
+    isAdmin: user?.role === 'admin',
+    isStaff: user?.role === 'staff',
+  };
+
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        loading,
-        error,
-        register,
-        login,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
 };
+
+export default AuthContext;
