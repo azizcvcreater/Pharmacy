@@ -26,7 +26,6 @@ export const ToastProvider = ({ children }) => {
     }, duration + 300);
   }, []);
 
-  // Helper methods for different toast types
   const showSuccess = useCallback((message, duration = 3000) => {
     showToast(message, 'success', duration);
   }, [showToast]);
@@ -43,15 +42,14 @@ export const ToastProvider = ({ children }) => {
     showToast(message, 'info', duration);
   }, [showToast]);
 
-  const removeToast = useCallback((id) => {
-    setToasts((prev) => prev.filter((toast) => toast.id !== id));
-  }, []);
-
-  // Localized toast messages
   const showLocalizedToast = useCallback((key, type = 'info', duration = 3000, options = {}) => {
     const message = t(key, options);
     showToast(message, type, duration);
   }, [showToast, t]);
+
+  const removeToast = useCallback((id) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+  }, []);
 
   const value = {
     showToast,

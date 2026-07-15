@@ -421,6 +421,7 @@ const Payments = () => {
                 ...suppliers.map(s => ({ value: s.id, label: s.name }))
               ]}
               className="!mb-0"
+              placeholder={t('common.select')}
             />
           </div>
         </div>

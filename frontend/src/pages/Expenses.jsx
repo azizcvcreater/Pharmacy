@@ -517,6 +517,7 @@ const Expenses = () => {
               }}
               options={categoryOptions}
               className="!mb-0"
+              placeholder={t('common.select')}
             />
           </div>
           <div className="sm:w-48">
@@ -529,6 +530,7 @@ const Expenses = () => {
               }}
               options={periodOptions}
               className="!mb-0"
+              placeholder={t('common.select')}
             />
           </div>
         </div>

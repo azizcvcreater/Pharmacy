@@ -1,5 +1,6 @@
 // src/components/common/LoadingSpinner.jsx
 import { useState, useEffect } from 'react';
+import { useTranslation } from '../../hooks/useTranslation';
 
 const LoadingSpinner = ({ 
   size = 'md', 
@@ -7,6 +8,7 @@ const LoadingSpinner = ({
   showText = true,
   className = ''
 }) => {
+  const { t } = useTranslation();
   const [dots, setDots] = useState('');
 
   useEffect(() => {
@@ -32,7 +34,7 @@ const LoadingSpinner = ({
       
       {showText && text && (
         <p className="mt-3 text-sm text-gray-600">
-          {text}
+          {text || t('common.loading')}
           <span className="inline-block w-6 text-left">{dots}</span>
         </p>
       )}

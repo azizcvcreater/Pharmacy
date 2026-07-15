@@ -507,6 +507,7 @@ const Sales = () => {
                 { value: 'non_prescription', label: t('sales.fields.nonPrescription') },
               ]}
               className="!mb-0"
+              placeholder={t('common.select')}
             />
           </div>
           <div className="sm:w-48">
@@ -524,6 +525,7 @@ const Sales = () => {
                 { value: 'unpaid', label: t('sales.status.unpaid') },
               ]}
               className="!mb-0"
+              placeholder={t('common.select')}
             />
           </div>
         </div>

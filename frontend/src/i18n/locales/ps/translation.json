@@ -1,6 +1,15 @@
 {
+  "app": {
+    "name": "PharmaCare"
+  },
+  "sidebar": {
+    "reports": "راپورونه",
+    "reportsDashboard": "لومړی پاڼه",
+    "salesReport": "د پلور راپور",
+    "profitLoss": "د ګټې او زیان راپور"
+  },
   "common": {
-    "loading": "ت بارېدو...",
+    "loading": "اماده کیدل...",
     "save": "خوندي کول",
     "cancel": "لغوه کول",
     "delete": "ړنګول",
@@ -28,7 +37,63 @@
     "export": "صادرول",
     "import": "واردول",
     "print": "چاپول",
-    "download": "ډاونلوډ"
+    "download": "ډاونلوډ",
+    "yes": "هو",
+    "no": "نه",
+    "submit": "سپارل",
+    "reset": "بیا تنظیمول",
+    "add": "ورزیات کړئ",
+    "remove": "لیرې کړئ",
+    "update": "تازه کړئ",
+    "create": "جوړ کړئ",
+    "details": "توضیحات",
+    "description": "تشریح",
+    "notes": "یادښتونه",
+    "reference": "حواله",
+    "invoice": "فاکتور",
+    "select": "غوره کړئ...",
+    "optional": "اختیاري",
+    "required": "اړین",
+    "noData": "کوم معلومات شتون نلري",
+    "showing": "ښودل",
+    "to": "ته",
+    "of": "له",
+    "items": "توکي",
+    "records": "رکوردونه",
+    "success": "بریالی",
+    "error": "تېروتنه",
+    "warning": "خبرداری",
+    "info": "مالومات",
+    "from": "له",
+    "method": "طریقه",
+    "category": "کټګوري",
+    "title": "عنوان",
+    "quantity": "شمېر",
+    "unitPrice": "د واحد بیه",
+    "createdAt": "جوړ شوی",
+    "days": "ورځې",
+    "selectLanguage": "ژبه غوره کړئ",
+    "searchPlaceholder": "لټون...",
+    "noItemsFound": "کوم توکي ونه موندل شول",
+    "itemsFound": "{{count}} توکي وموندل شول",
+    "showingItems": "له {{start}} څخه {{end}} پورې له {{total}} څخه",
+    "pleaseSelect": "مهرباني وکړئ غوره کړئ",
+    "enter": "واخلئ",
+    "found": "وموندل شول",
+    "selectImage": "مهرباني وکړئ د انځور فایل غوره کړئ",
+    "imageSizeError": "د انځور اندازه باید له 2MB څخه کمه وي",
+    "quantityError": "شمېر باید له 0 څخه زیات وي",
+    "priceError": "د واحد بیه باید له 0 څخه زیاته وي",
+    "amountError": "مقدار له پاتې بیلانس څخه زیات نشي",
+    "user": "کارن",
+    "noEmail": "بریښنالیک نشته",
+    "toggleSidebar": "سایډبار بدل کړئ",
+    "keyboardShortcut": "Ctrl+Shift+E/P/D",
+    "clear": "پاکول",
+    "generatedOn": "په نېټه جوړ شو",
+    "metric": "مېټریک",
+    "value": "ارزښت",
+    "unit": "یونټ"
   },
   "auth": {
     "login": "ننوتل",
@@ -48,7 +113,11 @@
     "invalidCredentials": "بریښنالیک یا پټ نوم ناسم دی. بیا هڅه وکړئ.",
     "registrationSuccess": "ثبت نام بریالی شو!",
     "loginSuccess": "ننوتل بریالي شول!",
-    "logoutSuccess": "وتل بریالي شول!"
+    "logoutSuccess": "وتل بریالي شول!",
+    "profileImage": "د پروفایل انځور",
+    "passwordMinLength": "پټ نوم باید لږ تر لږه ۶ توري ولري",
+    "termsAgree": "زه د خدماتو شرایطو او د خصوصیت پالیسي سره موافق یم",
+    "adminNote": "تاسو به مدیر یاست"
   },
   "dashboard": {
     "title": "لومړی پاڼه",
@@ -82,7 +151,11 @@
     "addSupplier": "تامینونکی ورزیات کړئ",
     "newSale": "نوی پلور",
     "newPurchase": "نوی پیرود",
-    "recordPayment": "تادیه ثبت کړئ"
+    "recordPayment": "تادیه ثبت کړئ",
+    "netProfit": "خالصه ګټه",
+    "noActivities": "کوم وروستي فعالیتونه نشته",
+    "totalCreditSubtitle": "د تامینونکو پور مقدار",
+    "totalDebitSubtitle": "د تامینونکو پور مقدار چې تاسو ته لري"
   },
   "medicines": {
     "title": "د درملو مدیریت",
@@ -116,6 +189,15 @@
       "nearExpiry": "نژدې ختمیدو",
       "expired": "تاریخ تیر شوی",
       "noDate": "نېټه نشته"
+    },
+    "table": {
+      "medicine": "درمل",
+      "details": "توضیحات",
+      "stock": "ذخیره",
+      "expiry": "ختمیدو",
+      "purchasePrice": "د پیرود بیه",
+      "sellingPrice": "د پلور بیه",
+      "actions": "کړنې"
     }
   },
   "suppliers": {
@@ -152,6 +234,15 @@
       "notes": "یادښتونه",
       "noPayments": "د دې تامینونکي لپاره کومه تادیه ثبت شوې نه ده",
       "totalPaid": "ټول تادیه شوي"
+    },
+    "table": {
+      "supplier": "تامینونکی",
+      "totalPurchases": "ټول پیرود",
+      "totalPaid": "ټول تادیه شوي",
+      "balance": "باقي",
+      "lastPayment": "وروستۍ تادیه",
+      "address": "پته",
+      "actions": "کړنې"
     }
   },
   "sales": {
@@ -202,6 +293,17 @@
       "paid": "تادیه شوی",
       "partial": "نیمګړی",
       "unpaid": "نه دی تادیه شوی"
+    },
+    "table": {
+      "invoice": "فاکتور",
+      "type": "ډول",
+      "patientDoctor": "ناروغ/ډاکټر",
+      "date": "نېټه",
+      "total": "ټول",
+      "paid": "تادیه شوی",
+      "balance": "باقي",
+      "status": "حالت",
+      "actions": "کړنې"
     }
   },
   "purchases": {
@@ -238,6 +340,16 @@
       "totalPurchases": "ټول پیرود",
       "totalPaid": "ټول تادیه شوي",
       "totalBalance": "ټول باقي"
+    },
+    "table": {
+      "invoice": "فاکتور",
+      "supplier": "تامینونکی",
+      "date": "نېټه",
+      "total": "ټول",
+      "paid": "تادیه شوی",
+      "balance": "باقي",
+      "status": "حالت",
+      "actions": "کړنې"
     }
   },
   "payments": {
@@ -269,6 +381,14 @@
       "check": "چیک",
       "creditCard": "کریډیټ کارت",
       "online": "آنلاین"
+    },
+    "table": {
+      "supplier": "تامینونکی",
+      "amount": "مقدار",
+      "method": "طریقه",
+      "date": "نېټه",
+      "reference": "حواله",
+      "actions": "کړنې"
     }
   },
   "expenses": {
@@ -307,6 +427,13 @@
       "period": "موده",
       "categories": "کټګورۍ",
       "expensesByCategory": "د کټګورۍ له مخې لګښتونه"
+    },
+    "table": {
+      "title": "عنوان",
+      "category": "کټګوري",
+      "amount": "مقدار",
+      "date": "نېټه",
+      "actions": "کړنې"
     }
   },
   "expiry": {
@@ -339,6 +466,14 @@
       "expiryDate": "د ختمیدو نېټه",
       "daysUntil": "د ختمیدو پورې ورځې",
       "sellingPrice": "د پلور بیه"
+    },
+    "table": {
+      "medicine": "درمل",
+      "batch": "د لړ شمېره",
+      "stock": "ذخیره",
+      "expiryDate": "د ختمیدو نېټه",
+      "daysUntil": "د ختمیدو پورې ورځې",
+      "sellingPrice": "د پلور بیه"
     }
   },
   "reports": {
@@ -362,7 +497,20 @@
     "expensesCount": "لګښتونه",
     "noData": "د دې مودې لپاره کوم معلومات شتون نلري",
     "beforeExpenses": "د لګښتونو دمخه",
-    "afterExpenses": "د لګښتونو وروسته"
+    "afterExpenses": "د لګښتونو وروسته",
+    "salesReport": "د پلور راپور",
+    "salesSubtitle": "د پلور معلومات وګورئ او صادر کړئ",
+    "fromDate": "له نېټې",
+    "toDate": "تر نېټې",
+    "saleType": "د پلور ډول",
+    "paymentStatus": "د تادیې حالت",
+    "allTypes": "ټول ډولونه",
+    "allStatus": "ټول حالتونه",
+    "prescription": "د نسخې سره",
+    "otc": "OTC",
+    "showing": "ښودل",
+    "salesFound": "پلور وموندل شو",
+    "totalExpenses": "ټول لګښتونه"
   },
   "profile": {
     "title": "پروفایل",
@@ -414,7 +562,26 @@
     "createdBy": "توسط",
     "joined": "ورګډ شوی",
     "self": "ځان",
-    "you": "(تاسو)"
+    "you": "(تاسو)",
+    "table": {
+      "user": "کاروونکی",
+      "role": "رول",
+      "createdBy": "توسط",
+      "joined": "ورګډ شوی",
+      "actions": "کړنې"
+    }
+  },
+  "createStaff": {
+    "title": "د کارمند حساب جوړول",
+    "subtitle": "خپل درملتون ته نوی کارمند ورزیات کړئ",
+    "fullName": "بشپړ نوم",
+    "email": "بریښنالیک",
+    "password": "پټ نوم",
+    "confirmPassword": "پټ نوم تایید",
+    "create": "کارمند جوړ کړئ",
+    "success": "کارمند بریالی جوړ شو!",
+    "error": "د کارمند جوړول ناکام شول",
+    "passwordMinLength": "پټ نوم باید لږ تر لږه ۶ توري ولري"
   },
   "errors": {
     "generic": "یوه ستونزه رامنځ ته شوه. مهرباني وکړئ بیا هڅه وکړئ.",
@@ -429,5 +596,143 @@
     "updated": "بریالی تازه شو!",
     "deleted": "بریالی ړنګ شو!",
     "created": "بریالی جوړ شو!"
+  },
+  "modals": {
+    "confirmDelete": "ړنګول تایید کړئ",
+    "areYouSure": "آیا تاسو ډاډه یاست؟",
+    "thisActionCannotBeUndone": "دا کړنه بیرته نه ګرځي.",
+    "yesDelete": "هو، ړنګ کړئ",
+    "noCancel": "نه، لغوه کړئ"
+  },
+  "buttons": {
+    "add": "ورزیات کړئ",
+    "edit": "سم کړئ",
+    "delete": "ړنګ کړئ",
+    "save": "خوندي کړئ",
+    "cancel": "لغوه کړئ",
+    "close": "تړل",
+    "submit": "سپارل",
+    "reset": "بیا تنظیمول",
+    "search": "لټون",
+    "clear": "پاکول",
+    "filter": "فلټر",
+    "refresh": "تازه کول",
+    "export": "صادرول",
+    "import": "واردول",
+    "print": "چاپول",
+    "download": "ډاونلوډ",
+    "upload": "اپلوډ",
+    "view": "کتل",
+    "show": "ښودل",
+    "hide": "پټول",
+    "more": "نور",
+    "less": "لږ"
+  },
+  "placeholders": {
+    "search": "لټون...",
+    "type": "ټایپ...",
+    "select": "غوره کړئ...",
+    "enterName": "نوم واخلئ...",
+    "enterEmail": "بریښنالیک واخلئ...",
+    "enterPassword": "پټ نوم واخلئ...",
+    "enterAmount": "مقدار واخلئ...",
+    "enterDate": "نېټه غوره کړئ...",
+    "enterPhone": "تلیفون شمېره واخلئ...",
+    "enterAddress": "پته واخلئ...",
+    "enterDescription": "توضیحات واخلئ..."
+  },
+  "forms": {
+    "cancel": "لغوه کول",
+    "submit": "سپارل",
+    "update": "تازه کول",
+    "add": "ورزیات کول",
+    "edit": "سمول",
+    "delete": "ړنګول",
+    "save": "خوندي کول",
+    "close": "تړل",
+    "selectOption": "یو انتخاب غوره کړئ",
+    "selectCategory": "کټګوري غوره کړئ",
+    "selectSupplier": "تامینونکی غوره کړئ",
+    "selectMedicine": "درمل غوره کړئ",
+    "selectPaymentMethod": "د تادیې طریقه غوره کړئ",
+    "enterTitle": "عنوان واخلئ",
+    "enterAmount": "مقدار واخلئ",
+    "enterDescription": "توضیحات واخلئ",
+    "enterName": "نوم واخلئ",
+    "enterEmail": "بریښنالیک واخلئ",
+    "enterPhone": "تلیفون شمېره واخلئ",
+    "enterAddress": "پته واخلئ",
+    "enterReference": "حواله شمېره واخلئ",
+    "enterNotes": "یادښتونه ورزیات کړئ",
+    "enterQuantity": "شمېر واخلئ",
+    "enterUnitPrice": "د واحد بیه واخلئ",
+    "searchMedicines": "د نوم یا برانډ له مخې درمل لټون وکړئ...",
+    "addMedicine": "درمل ورزیات کړئ",
+    "addItems": "توکي ورزیات کړئ",
+    "itemsAdded": "{{count}} توکي ورزیات شول",
+    "noItemsAdded": "تر اوسه کوم توکي نه دي ورزیات شوي"
+  },
+  "protected": {
+    "loading": "اماده کیدل..."
+  },
+  "pagination": {
+    "showing": "ښودل",
+    "to": "ته",
+    "of": "له",
+    "items": "توکي",
+    "previous": "مخکې",
+    "next": "وروسته"
+  },
+  "searchableSelect": {
+    "placeholder": "لټون او غوره کړئ...",
+    "search": "لټون...",
+    "noResults": "کوم توکي ونه موندل شول",
+    "itemsFound": "{{count}} توکي وموندل شول"
+  },
+  "toast": {
+    "close": "تړل",
+    "success": {
+      "saved": "بریالی خوندي شو!",
+      "updated": "بریالی تازه شو!",
+      "deleted": "بریالی ړنګ شو!",
+      "created": "بریالی جوړ شو!",
+      "login": "ننوتل بریالي شول!",
+      "logout": "وتل بریالي شول!",
+      "registration": "ثبت نام بریالی شو!",
+      "payment": "تادیه بریالی ثبت شوه!",
+      "staffCreated": "کارمند بریالی جوړ شو!",
+      "profileUpdated": "پروفایل بریالی تازه شو!"
+    },
+    "error": {
+      "generic": "یوه ستونزه رامنځ ته شوه. بیا هڅه وکړئ.",
+      "network": "د شبکې ستونزه. خپله اړیکه وګورئ.",
+      "unauthorized": "تاسو اجازه نلرئ.",
+      "notFound": "سرچینه ونه موندل شوه.",
+      "validation": "خپل معلومات وګورئ.",
+      "serverError": "د سرور ستونزه.",
+      "loginFailed": "بریښنالیک یا پټ نوم ناسم دی.",
+      "registrationFailed": "ثبت نام ناکام شو.",
+      "deleteFailed": "ړنګول ناکام شول.",
+      "saveFailed": "خوندي کول ناکام شول.",
+      "updateFailed": "تازه کول ناکام شول.",
+      "loadFailed": "د معلوماتو بارول ناکام شول."
+    },
+    "warning": {
+      "deleteConfirm": "آیا تاسو ډاډه یاست؟",
+      "unsavedChanges": "تاسو نا خوندي بدلونونه لرئ.",
+      "adminOnly": "دا کړنه یوازې د مدیرانو لپاره ده."
+    },
+    "info": {
+      "loading": "اماده کیدل...",
+      "pleaseWait": "مهرباني وکړئ انتظار وکړئ...",
+      "processing": "ستاسو غوښتنه پروسس کیږي...",
+      "uploading": "فایل اپلوډ کیږي..."
+    }
+  },
+  "profileImage": {
+    "upload": "د پروفایل انځور (اختیاري)",
+    "selectImage": "مهرباني وکړئ د انځور فایل غوره کړئ",
+    "imageSizeError": "د انځور اندازه باید له 2MB څخه کمه وي",
+    "removeImage": "انځور لیرې کړئ"
   }
 }

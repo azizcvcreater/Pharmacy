@@ -196,7 +196,7 @@ const SearchableSelect = ({
             </div>
 
             <div className="px-4 py-2 bg-gray-50 border-t border-gray-100 text-xs text-gray-500">
-              {filteredOptions.length} {t('common.items')} {t('common.found') || 'found'}
+              {filteredOptions.length} {t('common.items')} {t('common.found')}
             </div>
           </div>
         )}

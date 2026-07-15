@@ -104,7 +104,7 @@ const SalesReport = () => {
       const excelData = sales.map(s => ({
         'Invoice': s.invoice_number,
         'Date': new Date(s.sale_date).toLocaleDateString(),
-        'Type': s.sale_type === 'prescription' ? 'Prescription' : 'OTC',
+        'Type': s.sale_type === 'prescription' ? t('reports.prescription') : t('reports.otc'),
         'Patient': s.patient_name || 'N/A',
         'Doctor': s.doctor_name || 'N/A',
         'Doctor Fees': parseFloat(s.doctor_fees || 0).toFixed(2),
@@ -130,20 +130,20 @@ const SalesReport = () => {
       XLSX.utils.book_append_sheet(wb, ws, 'Sales');
 
       const summaryData = [
-        ['Sales Report Summary'],
+        [t('reports.salesReport')],
         [''],
-        ['Period', `${filters.start_date} to ${filters.end_date}`],
+        [`${t('reports.fromDate')}: ${filters.start_date} ${t('common.to')} ${filters.end_date}`],
         [''],
-        ['Metric', 'Value'],
-        ['Total Sales', summary.total_sales],
-        ['Total Amount', `$${summary.total_amount.toFixed(2)}`],
-        ['Total Paid', `$${summary.total_paid.toFixed(2)}`],
-        ['Total Balance', `$${summary.total_balance.toFixed(2)}`],
-        ['Total Doctor Fees', `$${summary.total_doctor_fees.toFixed(2)}`],
-        ['Prescription Sales', summary.prescription_count],
-        ['OTC Sales', summary.non_prescription_count],
+        [t('common.metric') || 'Metric', t('common.value') || 'Value'],
+        [t('sales.statistics.totalSales'), summary.total_sales],
+        [t('sales.statistics.totalSales'), `$${summary.total_amount.toFixed(2)}`],
+        [t('sales.statistics.totalPaid'), `$${summary.total_paid.toFixed(2)}`],
+        [t('sales.statistics.totalBalance'), `$${summary.total_balance.toFixed(2)}`],
+        [t('sales.statistics.doctorFees'), `$${summary.total_doctor_fees.toFixed(2)}`],
+        [t('reports.prescription'), summary.prescription_count],
+        [t('reports.otc'), summary.non_prescription_count],
         [''],
-        ['Generated On', new Date().toLocaleString()],
+        [`${t('common.generatedOn') || 'Generated On'}: ${new Date().toLocaleString()}`],
       ];
 
       const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);

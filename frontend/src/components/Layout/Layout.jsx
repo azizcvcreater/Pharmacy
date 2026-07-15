@@ -15,25 +15,36 @@ import {
   FiBarChart2,
   FiCalendar,
   FiFileText,
-  FiChevronRight
+  FiChevronRight,
+  FiGlobe
 } from 'react-icons/fi';
 import { FaPills } from 'react-icons/fa';
 import API from '../../api';
 import LoadingSpinner from '../common/LoadingSpinner';
-import LanguageSwitcher from '../../i18n/LanguageSwitcher';
 import { useTranslation } from '../../hooks/useTranslation';
 
 const Layout = () => {
-  const { t, isRTL } = useTranslation();
+  const { t, i18n, isRTL } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showReportsSubmenu, setShowReportsSubmenu] = useState(false);
+  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const dropdownRef = useRef(null);
+  const languageDropdownRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Languages configuration
+  const languages = [
+    { code: 'en', label: 'English', flag: '🇬🇧', nativeLabel: 'English', dir: 'ltr' },
+    { code: 'ps', label: 'پښتو', flag: '🇦🇫', nativeLabel: 'Pashto', dir: 'rtl' },
+    { code: 'fa-AF', label: 'دری', flag: '🇦🇫', nativeLabel: 'Dari', dir: 'rtl' },
+  ];
+
+  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
 
   // Check if reports submenu should be open
   useEffect(() => {
@@ -64,10 +75,14 @@ const Layout = () => {
     }
   }, [location, isMobile]);
 
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowProfileDropdown(false);
+      }
+      if (languageDropdownRef.current && !languageDropdownRef.current.contains(event.target)) {
+        setShowLanguageDropdown(false);
       }
     };
 
@@ -145,6 +160,16 @@ const Layout = () => {
     }
   };
 
+  // Language change handler
+  const changeLanguage = (langCode) => {
+    i18n.changeLanguage(langCode);
+    localStorage.setItem('i18nextLng', langCode);
+    const lang = languages.find(l => l.code === langCode);
+    document.documentElement.dir = lang?.dir || 'ltr';
+    document.documentElement.lang = langCode;
+    setShowLanguageDropdown(false);
+  };
+
   const userRole = user?.role || localStorage.getItem('userRole');
   const isAdmin = userRole === 'admin';
 
@@ -161,11 +186,11 @@ const Layout = () => {
     { path: '/users', icon: <FiUser />, label: t('users.title') || 'Users', visible: isAdmin },
   ];
 
-  // Report submenu items with translations
+  // Report submenu items with translations - FIXED
   const reportItems = [
-    { path: '/reports', icon: <FiBarChart2 />, label: t('reports.title') || 'Dashboard' },
+    { path: '/reports', icon: <FiBarChart2 />, label: t('reports.title') || 'Profit & Loss Report' },
     { path: '/reports/sales', icon: <FiFileText />, label: t('reports.salesReport') || 'Sales Report' },
-    { path: '/reports/profit-loss', icon: <FiBarChart2 />, label: 'Profit & Loss' },
+    { path: '/reports/profit-loss', icon: <FiBarChart2 />, label: t('reports.title') || 'Profit & Loss' },
   ];
 
   const visibleNavItems = navItems.filter(item => item.visible);
@@ -189,7 +214,7 @@ const Layout = () => {
           <button 
             onClick={toggleSidebar}
             className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors text-xl sm:text-2xl"
-            aria-label="Toggle sidebar"
+            aria-label={t('common.toggleSidebar') || 'Toggle sidebar'}
           >
             {sidebarOpen ? <FiX /> : <FiMenu />}
           </button>
@@ -199,15 +224,59 @@ const Layout = () => {
           >
             <FaPills className="text-blue-600 text-xl sm:text-2xl" />
             <h1 className="text-base sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent whitespace-nowrap">
-              PharmaCare
+              {t('app.name') || 'PharmaCare'}
             </h1>
           </div>
         </div>
         
         <div className="flex items-center gap-2 sm:gap-4">
-          {/* LANGUAGE SWITCHER - ONLY IN HEADER */}
-          <LanguageSwitcher variant="header" />
-          
+          {/* LANGUAGE SWITCHER */}
+          <div className="relative" ref={languageDropdownRef}>
+            <button
+              onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
+              className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200"
+              aria-label={t('common.selectLanguage') || 'Change language'}
+            >
+              <FiGlobe className="w-4 h-4" />
+              <span className="text-base sm:text-lg">{currentLanguage.flag}</span>
+              <span className="hidden md:inline text-xs sm:text-sm">{currentLanguage.label}</span>
+              <FiChevronDown 
+                size={14} 
+                className={`text-gray-400 transition-transform duration-200 ${showLanguageDropdown ? 'rotate-180' : ''}`}
+              />
+            </button>
+
+            {showLanguageDropdown && (
+              <div className="absolute right-0 mt-2 w-56 sm:w-64 bg-white rounded-xl shadow-lg border border-gray-200 z-50 overflow-hidden">
+                <div className="px-4 py-2.5 bg-gray-50 border-b border-gray-100 text-xs font-medium text-gray-500">
+                  {t('common.selectLanguage') || 'Select Language'}
+                </div>
+                {languages.map((lang) => (
+                  <button
+                    key={lang.code}
+                    onClick={() => changeLanguage(lang.code)}
+                    className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 hover:bg-gray-50 transition-colors ${
+                      i18n.language === lang.code ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
+                    }`}
+                  >
+                    <span className="text-2xl">{lang.flag}</span>
+                    <div className="flex-1">
+                      <div className="font-medium">{lang.label}</div>
+                      <div className="text-xs text-gray-400">{lang.nativeLabel}</div>
+                    </div>
+                    {i18n.language === lang.code && (
+                      <span className="text-blue-600 text-sm font-bold">✓</span>
+                    )}
+                  </button>
+                ))}
+                <div className="px-4 py-2 bg-gray-50 border-t border-gray-100 text-xs text-gray-400 flex justify-between">
+                  <span>{t('common.keyboardShortcut') || 'Ctrl+Shift+E/P/D'}</span>
+                  <span>{currentLanguage.flag} {currentLanguage.label}</span>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* User Profile Dropdown */}
           <div className="relative" ref={dropdownRef}>
             <button
@@ -229,7 +298,7 @@ const Layout = () => {
                   )}
                 </div>
                 <span className="text-xs sm:text-sm text-gray-700 hidden sm:block max-w-[100px] truncate">
-                  {user?.name || 'User'}
+                  {user?.name || t('common.user') || 'User'}
                 </span>
                 <FiChevronDown 
                   size={16} 
@@ -253,14 +322,14 @@ const Layout = () => {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white text-xl font-bold">
+                        <div className="w-full h-full bg-gradient-to-br from-blue-500 to-indigo-500 flex-items-center justify-center text-white text-xl font-bold">
                           {user?.name?.charAt(0)?.toUpperCase() || 'U'}
                         </div>
                       )}
                     </div>
                     <div className="min-w-0">
-                      <p className="font-semibold text-gray-900 truncate">{user?.name || 'User'}</p>
-                      <p className="text-sm text-gray-500 truncate">{user?.email || 'No email'}</p>
+                      <p className="font-semibold text-gray-900 truncate">{user?.name || t('common.user') || 'User'}</p>
+                      <p className="text-sm text-gray-500 truncate">{user?.email || t('common.noEmail') || 'No email'}</p>
                       <span className={`mt-1 inline-block px-2 py-0.5 text-xs font-semibold rounded-full ${
                         user?.role === 'admin' 
                           ? 'bg-purple-100 text-purple-800' 
@@ -342,7 +411,7 @@ const Layout = () => {
                 </li>
               ))}
 
-              {/* Reports Menu with Submenu */}
+              {/* Reports Menu with Submenu - FIXED */}
               <li>
                 <button
                   onClick={() => {
@@ -373,7 +442,7 @@ const Layout = () => {
                   )}
                 </button>
                 
-                {/* Submenu Items */}
+                {/* Submenu Items - FIXED */}
                 {(sidebarOpen || isMobile) && showReportsSubmenu && (
                   <ul className={`ml-4 mt-1 space-y-1 border-l-2 border-gray-200 pl-2 ${isRTL() ? 'border-r-2 border-l-0 mr-4 pr-2 ml-0' : ''}`}>
                     {reportItems.map((item) => (

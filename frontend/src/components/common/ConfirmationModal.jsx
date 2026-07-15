@@ -1,4 +1,6 @@
+// src/components/common/ConfirmationModal.jsx
 import { FiAlertTriangle, FiX } from 'react-icons/fi';
+import { useTranslation } from '../../hooks/useTranslation';
 import Button from './Button';
 
 const ConfirmationModal = ({
@@ -12,6 +14,8 @@ const ConfirmationModal = ({
   confirmVariant = 'danger',
   loading = false
 }) => {
+  const { t } = useTranslation();
+
   if (!isOpen) return null;
 
   return (
@@ -25,7 +29,7 @@ const ConfirmationModal = ({
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
-            aria-label="Close modal"
+            aria-label={t('common.close')}
           >
             <FiX size={24} />
           </button>
@@ -42,7 +46,7 @@ const ConfirmationModal = ({
             className="flex-1"
             disabled={loading}
           >
-            {cancelText}
+            {cancelText || t('common.cancel')}
           </Button>
           <Button
             variant={confirmVariant}
@@ -50,7 +54,7 @@ const ConfirmationModal = ({
             loading={loading}
             className="flex-1"
           >
-            {confirmText}
+            {confirmText || t('common.confirm')}
           </Button>
         </div>
       </div>

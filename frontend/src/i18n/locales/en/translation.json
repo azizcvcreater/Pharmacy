@@ -1,4 +1,13 @@
 {
+  "app": {
+    "name": "PharmaCare"
+  },
+  "sidebar": {
+    "reports": "Reports",
+    "reportsDashboard": "Dashboard",
+    "salesReport": "Sales Report",
+    "profitLoss": "Profit & Loss"
+  },
   "common": {
     "loading": "Loading...",
     "save": "Save",
@@ -75,7 +84,16 @@
     "imageSizeError": "Image size should be less than 2MB",
     "quantityError": "Quantity must be greater than 0",
     "priceError": "Unit price must be greater than 0",
-    "amountError": "Amount cannot exceed balance due"
+    "amountError": "Amount cannot exceed balance due",
+    "user": "User",
+    "noEmail": "No email",
+    "toggleSidebar": "Toggle sidebar",
+    "keyboardShortcut": "Ctrl+Shift+E/P/D",
+    "clear": "Clear",
+    "generatedOn": "Generated On",
+    "metric": "Metric",
+    "value": "Value",
+    "unit": "Unit"
   },
   "auth": {
     "login": "Login",
@@ -119,7 +137,9 @@
     "weeklySales": "This Week's Sales",
     "monthlySales": "This Month's Sales",
     "totalCredit": "Total Credit (You Owe)",
+    "totalCreditSubtitle": "Amount owed to suppliers",
     "totalDebit": "Total Debit (They Owe You)",
+    "totalDebitSubtitle": "Amount owed by suppliers",
     "recentActivities": "Recent Activities",
     "quickActions": "Quick Actions",
     "expired": "Expired",
@@ -670,7 +690,44 @@
     "itemsFound": "{{count}} item{{plural}} found"
   },
   "toast": {
-    "close": "Close notification"
+    "close": "Close notification",
+    "success": {
+      "saved": "Saved successfully!",
+      "updated": "Updated successfully!",
+      "deleted": "Deleted successfully!",
+      "created": "Created successfully!",
+      "login": "Login successful!",
+      "logout": "Logged out successfully",
+      "registration": "Registration successful!",
+      "payment": "Payment recorded successfully!",
+      "staffCreated": "Staff created successfully!",
+      "profileUpdated": "Profile updated successfully!"
+    },
+    "error": {
+      "generic": "Something went wrong. Please try again.",
+      "network": "Network error. Please check your connection.",
+      "unauthorized": "You are not authorized to perform this action.",
+      "notFound": "Resource not found.",
+      "validation": "Please check your input and try again.",
+      "serverError": "Server error. Please try again later.",
+      "loginFailed": "Invalid email or password. Please try again.",
+      "registrationFailed": "Registration failed. Please try again.",
+      "deleteFailed": "Delete failed. Please try again.",
+      "saveFailed": "Save failed. Please try again.",
+      "updateFailed": "Update failed. Please try again.",
+      "loadFailed": "Failed to load data. Please try again."
+    },
+    "warning": {
+      "deleteConfirm": "Are you sure you want to delete this item?",
+      "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?",
+      "adminOnly": "This action is only available for administrators."
+    },
+    "info": {
+      "loading": "Loading...",
+      "pleaseWait": "Please wait...",
+      "processing": "Processing your request...",
+      "uploading": "Uploading file..."
+    }
   },
   "profileImage": {
     "upload": "Profile picture (optional)",

@@ -384,20 +384,21 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* FIXED: Credit/Debit section with translated subtitles */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <StatCard
           title={t('dashboard.totalCredit')}
           value={formatCurrency(stats.total_credit)}
           icon="🔴"
           color="red"
-          subtitle="Amount owed to suppliers"
+          subtitle={t('dashboard.totalCreditSubtitle')}
         />
         <StatCard
           title={t('dashboard.totalDebit')}
           value={formatCurrency(stats.total_debit)}
           icon="🟢"
           color="green"
-          subtitle="Amount owed by suppliers"
+          subtitle={t('dashboard.totalDebitSubtitle')}
         />
       </div>
 

@@ -1,3 +1,6 @@
+// src/components/common/Button.jsx
+import { useTranslation } from '../../hooks/useTranslation';
+
 const Button = ({
   children,
   variant = 'primary',
@@ -10,6 +13,8 @@ const Button = ({
   type = 'button',
   ...props
 }) => {
+  const { t } = useTranslation();
+
   const variants = {
     primary: 'bg-blue-600 hover:bg-blue-700 text-white',
     secondary: 'bg-gray-200 hover:bg-gray-300 text-gray-800',

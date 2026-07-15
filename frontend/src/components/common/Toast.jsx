@@ -85,12 +85,10 @@ const Toast = ({
   return (
     <div className={`fixed z-50 ${positionClasses[position]} animate-slideIn max-w-sm w-full`}>
       <div className={`flex items-start gap-3 px-4 py-3 rounded-lg border-l-4 ${currentType.bg} ${currentType.border} shadow-lg relative overflow-hidden`}>
-        {/* Progress Bar */}
         <div 
           className={`absolute bottom-0 left-0 h-1 ${currentType.progressBar} transition-all duration-50`}
           style={{ width: `${progress}%` }}
         />
-        
         <span className="flex-shrink-0 mt-0.5">{currentType.icon}</span>
         <p className={`flex-1 text-sm font-medium ${currentType.text} break-words`}>{message}</p>
         <button

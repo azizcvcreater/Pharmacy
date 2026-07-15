@@ -1,3 +1,7 @@
+// src/components/common/Table.jsx
+import { useTranslation } from '../../hooks/useTranslation';
+import LoadingSpinner from './LoadingSpinner';
+
 const Table = ({ 
   columns, 
   data, 
@@ -7,10 +11,12 @@ const Table = ({
   emptyMessage = "No records found",
   className = ""
 }) => {
+  const { t } = useTranslation();
+
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <LoadingSpinner size="md" text={t('common.loading')} />
       </div>
     );
   }
@@ -19,7 +25,7 @@ const Table = ({
     return (
       <div className="text-center py-12 bg-white rounded-xl shadow-sm">
         <div className="text-4xl mb-3">📋</div>
-        <p className="text-gray-500">{emptyMessage}</p>
+        <p className="text-gray-500">{emptyMessage || t('common.noData')}</p>
       </div>
     );
   }

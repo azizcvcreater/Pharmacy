@@ -1,3 +1,6 @@
+// src/components/common/Select.jsx
+import { useTranslation } from '../../hooks/useTranslation';
+
 const Select = ({
   label,
   name,
@@ -10,6 +13,8 @@ const Select = ({
   className = '',
   ...props
 }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="mb-4">
       {label && (
@@ -30,7 +35,7 @@ const Select = ({
         } ${className}`}
         {...props}
       >
-        <option value="">{placeholder}</option>
+        <option value="">{placeholder || t('common.select')}</option>
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}

@@ -1,3 +1,6 @@
+// src/components/common/Input.jsx
+import { useTranslation } from '../../hooks/useTranslation';
+
 const Input = ({
   label,
   name,
@@ -12,6 +15,8 @@ const Input = ({
   disabled = false,
   ...props
 }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="mb-4">
       {label && (
@@ -31,7 +36,7 @@ const Input = ({
           name={name}
           value={value}
           onChange={onChange}
-          placeholder={placeholder}
+          placeholder={placeholder || t('common.enter')}
           required={required}
           disabled={disabled}
           className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${

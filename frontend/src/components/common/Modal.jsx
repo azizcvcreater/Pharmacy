@@ -1,4 +1,6 @@
+// src/components/common/Modal.jsx
 import { useEffect, useRef } from 'react';
+import { useTranslation } from '../../hooks/useTranslation';
 
 const Modal = ({ 
   isOpen, 
@@ -9,6 +11,7 @@ const Modal = ({
   showCloseButton = true,
   className = ''
 }) => {
+  const { t } = useTranslation();
   const modalRef = useRef(null);
 
   useEffect(() => {
@@ -61,7 +64,7 @@ const Modal = ({
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600 text-2xl transition-colors"
-              aria-label="Close modal"
+              aria-label={t('common.close')}
             >
               ×
             </button>

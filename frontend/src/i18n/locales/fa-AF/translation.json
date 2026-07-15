@@ -1,4 +1,13 @@
 {
+  "app": {
+    "name": "PharmaCare"
+  },
+  "sidebar": {
+    "reports": "گزارش‌ها",
+    "reportsDashboard": "داشبورد",
+    "salesReport": "گزارش فروش",
+    "profitLoss": "گزارش سود و زیان"
+  },
   "common": {
     "loading": "در حال بارگذاری...",
     "save": "ذخیره",
@@ -28,7 +37,63 @@
     "export": "خروجی",
     "import": "ورودی",
     "print": "چاپ",
-    "download": "دانلود"
+    "download": "دانلود",
+    "yes": "بله",
+    "no": "خیر",
+    "submit": "ارسال",
+    "reset": "بازنشانی",
+    "add": "افزودن",
+    "remove": "حذف",
+    "update": "بروزرسانی",
+    "create": "ایجاد",
+    "details": "جزئیات",
+    "description": "توضیحات",
+    "notes": "یادداشت‌ها",
+    "reference": "مرجع",
+    "invoice": "فاکتور",
+    "select": "انتخاب کنید...",
+    "optional": "اختیاری",
+    "required": "اجباری",
+    "noData": "هیچ داده‌ای در دسترس نیست",
+    "showing": "نمایش",
+    "to": "تا",
+    "of": "از",
+    "items": "آیتم‌ها",
+    "records": "رکوردها",
+    "success": "موفق",
+    "error": "خطا",
+    "warning": "اخطار",
+    "info": "اطلاعات",
+    "from": "از",
+    "method": "روش",
+    "category": "دسته‌بندی",
+    "title": "عنوان",
+    "quantity": "تعداد",
+    "unitPrice": "قیمت واحد",
+    "createdAt": "ایجاد شده",
+    "days": "روزها",
+    "selectLanguage": "انتخاب زبان",
+    "searchPlaceholder": "جستجو...",
+    "noItemsFound": "هیچ آیتمی یافت نشد",
+    "itemsFound": "{{count}} آیتم یافت شد",
+    "showingItems": "نمایش {{start}} تا {{end}} از {{total}}",
+    "pleaseSelect": "لطفاً انتخاب کنید",
+    "enter": "وارد کنید",
+    "found": "یافت شد",
+    "selectImage": "لطفاً یک فایل تصویر انتخاب کنید",
+    "imageSizeError": "اندازه تصویر باید کمتر از 2MB باشد",
+    "quantityError": "تعداد باید بیشتر از 0 باشد",
+    "priceError": "قیمت واحد باید بیشتر از 0 باشد",
+    "amountError": "مبلغ نمی‌تواند از مانده بیشتر باشد",
+    "user": "کاربر",
+    "noEmail": "ایمیل وجود ندارد",
+    "toggleSidebar": "تغییر وضعیت نوار کناری",
+    "keyboardShortcut": "Ctrl+Shift+E/P/D",
+    "clear": "پاک کردن",
+    "generatedOn": "تولید شده در",
+    "metric": "معیار",
+    "value": "مقدار",
+    "unit": "واحد"
   },
   "auth": {
     "login": "ورود",
@@ -48,7 +113,11 @@
     "invalidCredentials": "ایمیل یا رمز عبور اشتباه است. لطفاً دوباره تلاش کنید.",
     "registrationSuccess": "ثبت نام با موفقیت انجام شد!",
     "loginSuccess": "ورود با موفقیت انجام شد!",
-    "logoutSuccess": "خروج با موفقیت انجام شد!"
+    "logoutSuccess": "خروج با موفقیت انجام شد!",
+    "profileImage": "تصویر پروفایل",
+    "passwordMinLength": "رمز عبور باید حداقل ۶ کاراکتر باشد",
+    "termsAgree": "من با شرایط خدمات و سیاست حفظ حریم خصوصی موافقم",
+    "adminNote": "شما مدیر خواهید بود"
   },
   "dashboard": {
     "title": "داشبورد",
@@ -82,7 +151,11 @@
     "addSupplier": "افزودن تأمین‌کننده",
     "newSale": "فروش جدید",
     "newPurchase": "خرید جدید",
-    "recordPayment": "ثبت پرداخت"
+    "recordPayment": "ثبت پرداخت",
+    "netProfit": "سود خالص",
+    "noActivities": "هیچ فعالیت اخیری وجود ندارد",
+     "totalCreditSubtitle": "مبلغ بدهی به تأمین‌کنندگان",
+    "totalDebitSubtitle": "مبلغ بدهی تأمین‌کنندگان به شما"
   },
   "medicines": {
     "title": "مدیریت داروها",
@@ -116,6 +189,15 @@
       "nearExpiry": "نزدیک به انقضا",
       "expired": "منقضی شده",
       "noDate": "بدون تاریخ"
+    },
+    "table": {
+      "medicine": "دارو",
+      "details": "جزئیات",
+      "stock": "موجودی",
+      "expiry": "انقضا",
+      "purchasePrice": "قیمت خرید",
+      "sellingPrice": "قیمت فروش",
+      "actions": "عملیات"
     }
   },
   "suppliers": {
@@ -152,6 +234,15 @@
       "notes": "یادداشت‌ها",
       "noPayments": "هیچ پرداختی برای این تأمین‌کننده ثبت نشده است",
       "totalPaid": "کل پرداخت شده"
+    },
+    "table": {
+      "supplier": "تأمین‌کننده",
+      "totalPurchases": "کل خریدها",
+      "totalPaid": "کل پرداخت شده",
+      "balance": "مانده",
+      "lastPayment": "آخرین پرداخت",
+      "address": "آدرس",
+      "actions": "عملیات"
     }
   },
   "sales": {
@@ -202,6 +293,17 @@
       "paid": "پرداخت شده",
       "partial": "ناقص",
       "unpaid": "پرداخت نشده"
+    },
+    "table": {
+      "invoice": "فاکتور",
+      "type": "نوع",
+      "patientDoctor": "بیمار/پزشک",
+      "date": "تاریخ",
+      "total": "مجموع",
+      "paid": "پرداخت شده",
+      "balance": "مانده",
+      "status": "وضعیت",
+      "actions": "عملیات"
     }
   },
   "purchases": {
@@ -238,6 +340,16 @@
       "totalPurchases": "کل خریدها",
       "totalPaid": "کل پرداخت شده",
       "totalBalance": "کل مانده"
+    },
+    "table": {
+      "invoice": "فاکتور",
+      "supplier": "تأمین‌کننده",
+      "date": "تاریخ",
+      "total": "مجموع",
+      "paid": "پرداخت شده",
+      "balance": "مانده",
+      "status": "وضعیت",
+      "actions": "عملیات"
     }
   },
   "payments": {
@@ -269,6 +381,14 @@
       "check": "چک",
       "creditCard": "کارت اعتباری",
       "online": "آنلاین"
+    },
+    "table": {
+      "supplier": "تأمین‌کننده",
+      "amount": "مبلغ",
+      "method": "روش",
+      "date": "تاریخ",
+      "reference": "مرجع",
+      "actions": "عملیات"
     }
   },
   "expenses": {
@@ -307,6 +427,13 @@
       "period": "دوره",
       "categories": "دسته‌بندی‌ها",
       "expensesByCategory": "هزینه‌ها بر اساس دسته‌بندی"
+    },
+    "table": {
+      "title": "عنوان",
+      "category": "دسته‌بندی",
+      "amount": "مبلغ",
+      "date": "تاریخ",
+      "actions": "عملیات"
     }
   },
   "expiry": {
@@ -339,6 +466,14 @@
       "expiryDate": "تاریخ انقضا",
       "daysUntil": "روز تا انقضا",
       "sellingPrice": "قیمت فروش"
+    },
+    "table": {
+      "medicine": "دارو",
+      "batch": "شماره بچ",
+      "stock": "موجودی",
+      "expiryDate": "تاریخ انقضا",
+      "daysUntil": "روز تا انقضا",
+      "sellingPrice": "قیمت فروش"
     }
   },
   "reports": {
@@ -362,7 +497,20 @@
     "expensesCount": "هزینه‌ها",
     "noData": "هیچ داده‌ای برای این دوره در دسترس نیست",
     "beforeExpenses": "قبل از هزینه‌ها",
-    "afterExpenses": "بعد از هزینه‌ها"
+    "afterExpenses": "بعد از هزینه‌ها",
+    "salesReport": "گزارش فروش",
+    "salesSubtitle": "مشاهده و خروجی داده‌های فروش",
+    "fromDate": "از تاریخ",
+    "toDate": "تا تاریخ",
+    "saleType": "نوع فروش",
+    "paymentStatus": "وضعیت پرداخت",
+    "allTypes": "همه انواع",
+    "allStatus": "همه وضعیت‌ها",
+    "prescription": "با نسخه",
+    "otc": "OTC",
+    "showing": "نمایش",
+    "salesFound": "فروش یافت شد",
+    "totalExpenses": "کل هزینه‌ها"
   },
   "profile": {
     "title": "پروفایل",
@@ -414,7 +562,26 @@
     "createdBy": "ایجاد شده توسط",
     "joined": "عضویت",
     "self": "خود",
-    "you": "(شما)"
+    "you": "(شما)",
+    "table": {
+      "user": "کاربر",
+      "role": "نقش",
+      "createdBy": "ایجاد شده توسط",
+      "joined": "عضویت",
+      "actions": "عملیات"
+    }
+  },
+  "createStaff": {
+    "title": "ایجاد حساب کارمند",
+    "subtitle": "افزودن یک کارمند جدید به داروخانه شما",
+    "fullName": "نام کامل",
+    "email": "آدرس ایمیل",
+    "password": "رمز عبور",
+    "confirmPassword": "تأیید رمز عبور",
+    "create": "ایجاد کارمند",
+    "success": "کارمند با موفقیت ایجاد شد!",
+    "error": "ایجاد کارمند ناموفق بود",
+    "passwordMinLength": "رمز عبور باید حداقل ۶ کاراکتر باشد"
   },
   "errors": {
     "generic": "خطایی رخ داد. لطفاً دوباره تلاش کنید.",
@@ -429,5 +596,143 @@
     "updated": "با موفقیت بروزرسانی شد!",
     "deleted": "با موفقیت حذف شد!",
     "created": "با موفقیت ایجاد شد!"
+  },
+  "modals": {
+    "confirmDelete": "تأیید حذف",
+    "areYouSure": "آیا مطمئن هستید؟",
+    "thisActionCannotBeUndone": "این عمل قابل بازگشت نیست.",
+    "yesDelete": "بله، حذف کن",
+    "noCancel": "نه، لغو کن"
+  },
+  "buttons": {
+    "add": "افزودن",
+    "edit": "ویرایش",
+    "delete": "حذف",
+    "save": "ذخیره",
+    "cancel": "لغو",
+    "close": "بستن",
+    "submit": "ارسال",
+    "reset": "بازنشانی",
+    "search": "جستجو",
+    "clear": "پاک کردن",
+    "filter": "فیلتر",
+    "refresh": "بروزرسانی",
+    "export": "خروجی",
+    "import": "ورودی",
+    "print": "چاپ",
+    "download": "دانلود",
+    "upload": "آپلود",
+    "view": "مشاهده",
+    "show": "نمایش",
+    "hide": "مخفی",
+    "more": "بیشتر",
+    "less": "کمتر"
+  },
+  "placeholders": {
+    "search": "جستجو...",
+    "type": "تایپ کنید...",
+    "select": "انتخاب کنید...",
+    "enterName": "نام را وارد کنید...",
+    "enterEmail": "ایمیل را وارد کنید...",
+    "enterPassword": "رمز عبور را وارد کنید...",
+    "enterAmount": "مبلغ را وارد کنید...",
+    "enterDate": "تاریخ را انتخاب کنید...",
+    "enterPhone": "شماره تلفن را وارد کنید...",
+    "enterAddress": "آدرس را وارد کنید...",
+    "enterDescription": "توضیحات را وارد کنید..."
+  },
+  "forms": {
+    "cancel": "لغو",
+    "submit": "ارسال",
+    "update": "بروزرسانی",
+    "add": "افزودن",
+    "edit": "ویرایش",
+    "delete": "حذف",
+    "save": "ذخیره",
+    "close": "بستن",
+    "selectOption": "یک گزینه انتخاب کنید",
+    "selectCategory": "دسته‌بندی را انتخاب کنید",
+    "selectSupplier": "تأمین‌کننده را انتخاب کنید",
+    "selectMedicine": "دارو را انتخاب کنید",
+    "selectPaymentMethod": "روش پرداخت را انتخاب کنید",
+    "enterTitle": "عنوان را وارد کنید",
+    "enterAmount": "مبلغ را وارد کنید",
+    "enterDescription": "توضیحات را وارد کنید",
+    "enterName": "نام را وارد کنید",
+    "enterEmail": "ایمیل را وارد کنید",
+    "enterPhone": "شماره تلفن را وارد کنید",
+    "enterAddress": "آدرس را وارد کنید",
+    "enterReference": "شماره مرجع را وارد کنید",
+    "enterNotes": "یادداشت‌ها را اضافه کنید",
+    "enterQuantity": "تعداد را وارد کنید",
+    "enterUnitPrice": "قیمت واحد را وارد کنید",
+    "searchMedicines": "جستجوی داروها بر اساس نام یا برند...",
+    "addMedicine": "افزودن دارو",
+    "addItems": "افزودن اقلام",
+    "itemsAdded": "{{count}} آیتم اضافه شد",
+    "noItemsAdded": "هنوز هیچ آیتمی اضافه نشده است"
+  },
+  "protected": {
+    "loading": "در حال بارگذاری..."
+  },
+  "pagination": {
+    "showing": "نمایش",
+    "to": "تا",
+    "of": "از",
+    "items": "آیتم‌ها",
+    "previous": "قبلی",
+    "next": "بعدی"
+  },
+  "searchableSelect": {
+    "placeholder": "جستجو و انتخاب کنید...",
+    "search": "جستجو...",
+    "noResults": "هیچ آیتمی یافت نشد",
+    "itemsFound": "{{count}} آیتم یافت شد"
+  },
+  "toast": {
+    "close": "بستن",
+    "success": {
+      "saved": "با موفقیت ذخیره شد!",
+      "updated": "با موفقیت بروزرسانی شد!",
+      "deleted": "با موفقیت حذف شد!",
+      "created": "با موفقیت ایجاد شد!",
+      "login": "ورود با موفقیت انجام شد!",
+      "logout": "خروج با موفقیت انجام شد!",
+      "registration": "ثبت نام با موفقیت انجام شد!",
+      "payment": "پرداخت با موفقیت ثبت شد!",
+      "staffCreated": "کارمند با موفقیت ایجاد شد!",
+      "profileUpdated": "پروفایل با موفقیت بروزرسانی شد!"
+    },
+    "error": {
+      "generic": "خطایی رخ داد. لطفاً دوباره تلاش کنید.",
+      "network": "خطای شبکه. اتصال خود را بررسی کنید.",
+      "unauthorized": "شما اجازه این عمل را ندارید.",
+      "notFound": "منبع مورد نظر یافت نشد.",
+      "validation": "ورودی خود را بررسی کنید.",
+      "serverError": "خطای سرور.",
+      "loginFailed": "ایمیل یا رمز عبور اشتباه است.",
+      "registrationFailed": "ثبت نام ناموفق بود.",
+      "deleteFailed": "حذف ناموفق بود.",
+      "saveFailed": "ذخیره ناموفق بود.",
+      "updateFailed": "بروزرسانی ناموفق بود.",
+      "loadFailed": "بارگذاری داده‌ها ناموفق بود."
+    },
+    "warning": {
+      "deleteConfirm": "آیا مطمئن هستید؟",
+      "unsavedChanges": "تغییرات ذخیره نشده دارید.",
+      "adminOnly": "این عمل فقط برای مدیران در دسترس است."
+    },
+    "info": {
+      "loading": "در حال بارگذاری...",
+      "pleaseWait": "لطفاً منتظر باشید...",
+      "processing": "در حال پردازش درخواست شما...",
+      "uploading": "در حال آپلود فایل..."
+    }
+  },
+  "profileImage": {
+    "upload": "تصویر پروفایل (اختیاری)",
+    "selectImage": "لطفاً یک فایل تصویر انتخاب کنید",
+    "imageSizeError": "اندازه تصویر باید کمتر از 2MB باشد",
+    "removeImage": "حذف تصویر"
   }
 }

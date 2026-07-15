@@ -456,12 +456,13 @@ const Purchases = () => {
                 setCurrentPage(1);
               }}
               options={[
-                { value: '', label: t('reports.allStatus') },
+                { value: '', label: t('common.all') },
                 { value: 'paid', label: t('common.paid') },
                 { value: 'partial', label: t('common.partial') },
                 { value: 'unpaid', label: t('common.unpaid') },
               ]}
               className="!mb-0"
+              placeholder={t('common.select')}
             />
           </div>
         </div>
@@ -560,8 +561,8 @@ const Purchases = () => {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">{t('medicines.table.medicine')}</th>
-                      <th className="px-3 py-2 text-center text-xs font-medium text-gray-500">{t('common.quantity') || 'Qty'}</th>
-                      <th className="px-3 py-2 text-right text-xs font-medium text-gray-500">{t('common.unitPrice') || 'Unit Price'}</th>
+                      <th className="px-3 py-2 text-center text-xs font-medium text-gray-500">{t('common.quantity')}</th>
+                      <th className="px-3 py-2 text-right text-xs font-medium text-gray-500">{t('common.unitPrice')}</th>
                       <th className="px-3 py-2 text-right text-xs font-medium text-gray-500">{t('common.total')}</th>
                     </tr>
                   </thead>
