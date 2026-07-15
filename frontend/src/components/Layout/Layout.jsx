@@ -15,7 +15,7 @@ import {
   FiBarChart2,
   FiCalendar,
   FiFileText,
-  FiChevronRight,
+  FiChevronLeft,
   FiGlobe
 } from 'react-icons/fi';
 import { FaPills } from 'react-icons/fa';
@@ -434,7 +434,7 @@ const Layout = () => {
                     )}
                   </div>
                   {(sidebarOpen || isMobile) && (
-                    <FiChevronRight 
+                    <FiChevronLeft 
                       className={`transition-transform duration-200 ${
                         showReportsSubmenu ? 'rotate-90' : ''
                       }`}
