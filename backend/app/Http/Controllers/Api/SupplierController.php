@@ -17,7 +17,9 @@ class SupplierController extends Controller
         
         $adminId = $user->isAdmin() ? $user->id : $user->admin_id;
         
-        $query = Supplier::where('admin_id', $adminId);
+        $query = Supplier::where('admin_id', $adminId)
+            ->withSum('purchases', 'total')
+            ->withSum('payments', 'amount');
         
         if ($search) {
             $query->where(function($q) use ($search) {
@@ -28,6 +30,13 @@ class SupplierController extends Controller
         }
         
         $suppliers = $query->latest()->paginate($perPage);
+        
+        // Map aggregated sums to expected frontend field names
+        $suppliers->getCollection()->transform(function ($supplier) {
+            $supplier->total_purchases = $supplier->purchases_sum_total ?? 0;
+            $supplier->total_paid = $supplier->payments_sum_amount ?? 0;
+            return $supplier;
+        });
         
         return response()->json([
             'data' => $suppliers->items(),

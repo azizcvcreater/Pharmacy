@@ -68,32 +68,55 @@ export default function Dashboard() {
 
   const fetchAllStats = async (currentUser) => {
     try {
-      const medRes = await API.get("/medicines?limit=1");
-      const supRes = await API.get("/suppliers?limit=100");
-      const suppliers = supRes.data.data || supRes.data || [];
-      const payRes = await API.get("/supplier-payments?limit=1");
-      const purRes = await API.get("/purchases?limit=100");
-      const purchases = purRes.data.data || purRes.data || [];
-      const saleRes = await API.get("/sales?limit=100");
-      const sales = saleRes.data.data || saleRes.data || [];
-      const userRes = await API.get("/users");
+      // Medicines (includes expiry_stats)
+      const medRes = await API.get("/medicines?limit=1").catch(() => ({ data: {} }));
+      const expiryStats = medRes.data?.expiry_stats || { expired: 0, near_expiry: 0 };
+
+      // Suppliers (now with total_purchases and total_paid)
+      const supRes = await API.get("/suppliers?limit=100").catch(() => ({ data: { data: [] } }));
+      const suppliers = supRes.data?.data || [];
+
+      // Supplier payments count
+      const payRes = await API.get("/supplier-payments?limit=1").catch(() => ({ data: { total: 0 } }));
+      const payments = payRes.data?.total || 0;
+
+      // Purchases
+      const purRes = await API.get("/purchases?limit=100").catch(() => ({ data: { data: [] } }));
+      const purchases = purRes.data?.data || [];
+
+      // Sales
+      const saleRes = await API.get("/sales?limit=100").catch(() => ({ data: { data: [] } }));
+      const sales = saleRes.data?.data || [];
+
+      // Users
+      const userRes = await API.get("/users").catch(() => ({ data: [] }));
       const users = userRes.data || [];
-      const profitRes = await API.get("/profit/summary?period=monthly");
+
+      // Profit summary
+      const profitRes = await API.get("/profit/summary?period=monthly").catch(() => ({ data: {} }));
       const profitData = profitRes.data || {};
-      
+
+      // Stock summary
+      const stockRes = await API.get("/medicines/stock-summary").catch(() => ({ data: {} }));
+      const stockStats = stockRes.data || {};
+
+      // Calculate credit/debit from suppliers
       let totalCredit = 0;
       let totalDebit = 0;
-      
       suppliers.forEach(supplier => {
-        const balance = (supplier.total_purchases || 0) - (supplier.total_paid || 0);
+        const totalPurchases = supplier.total_purchases || 0;
+        const totalPaid = supplier.total_paid || 0;
+        const balance = totalPurchases - totalPaid;
         if (balance > 0) totalCredit += balance;
         else if (balance < 0) totalDebit += Math.abs(balance);
       });
 
+      // Sales totals
       const totalSalesAmount = sales.reduce((sum, s) => sum + parseFloat(s.total || 0), 0);
       const totalPurchasesAmount = purchases.reduce((sum, p) => sum + parseFloat(p.total || 0), 0);
       const totalBalance = totalSalesAmount - totalPurchasesAmount;
 
+      // Date-based sales
       const today = new Date().toISOString().split('T')[0];
       const todaySales = sales.filter(s => s.sale_date === today);
       const todaySalesAmount = todaySales.reduce((sum, s) => sum + parseFloat(s.total || 0), 0);
@@ -108,10 +131,7 @@ export default function Dashboard() {
       const monthlySales = sales.filter(s => new Date(s.sale_date) >= monthAgo);
       const monthlySalesAmount = monthlySales.reduce((sum, s) => sum + parseFloat(s.total || 0), 0);
 
-      const expiryStats = medRes.data.expiry_stats || { expired: 0, near_expiry: 0 };
-      const stockRes = await API.get("/medicines/stock-summary");
-      const stockStats = stockRes.data || {};
-
+      // Staff count
       const staffCount = users.filter(u => {
         if (currentUser?.role === 'admin') {
           return u.role === 'staff' && u.admin_id === currentUser.id;
@@ -120,9 +140,9 @@ export default function Dashboard() {
       }).length;
 
       setStats({
-        medicines: medRes.data.total || 0,
-        suppliers: supRes.data.total || suppliers.length || 0,
-        payments: payRes.data.total || 0,
+        medicines: medRes.data?.total || 0,
+        suppliers: supRes.data?.total || suppliers.length || 0,
+        payments: payments,
         purchases: purchases.length || 0,
         sales: sales.length || 0,
         users: users.length,
@@ -154,9 +174,9 @@ export default function Dashboard() {
   const fetchRecentData = async () => {
     try {
       const saleRes = await API.get("/sales?limit=5");
-      const sales = saleRes.data.data || saleRes.data || [];
+      const sales = saleRes.data?.data || [];
       const purRes = await API.get("/purchases?limit=5");
-      const purchases = purRes.data.data || purRes.data || [];
+      const purchases = purRes.data?.data || [];
 
       const activities = [];
       
@@ -164,7 +184,7 @@ export default function Dashboard() {
         activities.push({
           id: `sale-${sale.id}`,
           type: 'sale',
-          title: `${t('sales.title')} #${sale.invoice_number}`,
+          title: `${t('sales.title')} ${sale.invoice_number}`,
           amount: sale.total,
           date: sale.sale_date,
           status: sale.payment_status,
@@ -177,7 +197,7 @@ export default function Dashboard() {
         activities.push({
           id: `purchase-${purchase.id}`,
           type: 'purchase',
-          title: `${t('purchases.title')} #${purchase.invoice_number}`,
+          title: `${t('purchases.title')} ${purchase.invoice_number}`,
           amount: purchase.total,
           date: purchase.purchase_date,
           status: purchase.payment_status,
@@ -384,7 +404,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* FIXED: Credit/Debit section with translated subtitles */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <StatCard
           title={t('dashboard.totalCredit')}

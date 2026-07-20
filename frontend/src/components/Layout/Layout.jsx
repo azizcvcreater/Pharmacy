@@ -16,7 +16,9 @@ import {
   FiCalendar,
   FiFileText,
   FiChevronLeft,
-  FiGlobe
+  FiGlobe,
+  FiTrendingDown,
+  FiCreditCard
 } from 'react-icons/fi';
 import { FaPills } from 'react-icons/fa';
 import API from '../../api';
@@ -173,7 +175,7 @@ const Layout = () => {
   const userRole = user?.role || localStorage.getItem('userRole');
   const isAdmin = userRole === 'admin';
 
-  // Navigation items with translations
+  // Navigation items with distinct icons
   const navItems = [
     { path: '/dashboard', icon: <FiHome />, label: t('dashboard.title') || 'Dashboard', visible: true },
     { path: '/medicines', icon: <FaPills />, label: t('medicines.title') || 'Medicines', visible: true },
@@ -181,12 +183,12 @@ const Layout = () => {
     { path: '/suppliers', icon: <FiTruck />, label: t('suppliers.title') || 'Suppliers', visible: true },
     { path: '/purchases', icon: <FiShoppingCart />, label: t('purchases.title') || 'Purchases', visible: true },
     { path: '/sales', icon: <FiDollarSign />, label: t('sales.title') || 'Sales', visible: true },
-    { path: '/expenses', icon: <FiDollarSign />, label: t('expenses.title') || 'Expenses', visible: true },
-    { path: '/payments', icon: <FiDollarSign />, label: t('payments.title') || 'Payments', visible: true },
+    { path: '/expenses', icon: <FiTrendingDown />, label: t('expenses.title') || 'Expenses', visible: true },
+    { path: '/payments', icon: <FiCreditCard />, label: t('payments.title') || 'Payments', visible: true },
     { path: '/users', icon: <FiUser />, label: t('users.title') || 'Users', visible: isAdmin },
   ];
 
-  // Report submenu items with translations - FIXED
+  // Report submenu items with translations
   const reportItems = [
     { path: '/reports', icon: <FiBarChart2 />, label: t('reports.title') || 'Profit & Loss Report' },
     { path: '/reports/sales', icon: <FiFileText />, label: t('reports.salesReport') || 'Sales Report' },
@@ -205,6 +207,18 @@ const Layout = () => {
   }
 
   const isReportActive = location.pathname.startsWith('/reports');
+
+  // Helper to get avatar fallback URL using UI Avatars (generates initials)
+  const getAvatarFallback = (name) => {
+    const encodedName = encodeURIComponent(name || 'User');
+    return `https://ui-avatars.com/api/?name=${encodedName}&background=6366f1&color=fff&size=64&font-size=0.5&bold=true`;
+  };
+
+  // Image onError handler: replace with fallback avatar
+  const handleImageError = (e, name) => {
+    e.target.onerror = null; // prevent infinite loop
+    e.target.src = getAvatarFallback(name);
+  };
 
   return (
     <div className={`flex flex-col h-screen bg-gray-50 overflow-hidden ${isRTL() ? 'rtl' : 'ltr'}`}>
@@ -247,7 +261,7 @@ const Layout = () => {
             </button>
 
             {showLanguageDropdown && (
-              <div className="absolute right-0 mt-2 w-56 sm:w-64 bg-white rounded-xl shadow-lg border border-gray-200 z-50 overflow-hidden">
+              <div className="absolute end-0 mt-2 w-56 sm:w-64 bg-white rounded-xl shadow-lg border border-gray-200 z-50 overflow-hidden">
                 <div className="px-4 py-2.5 bg-gray-50 border-b border-gray-100 text-xs font-medium text-gray-500">
                   {t('common.selectLanguage') || 'Select Language'}
                 </div>
@@ -284,12 +298,13 @@ const Layout = () => {
               className="flex items-center gap-2 hover:bg-gray-100 rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 transition-colors"
             >
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden border-2 border-gray-200 flex-shrink-0">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden border-2 border-gray-200 flex-shrink-0 bg-gray-100">
                   {user?.profile_image_url ? (
                     <img 
-                      src={user.profile_image_url} 
-                      alt={user.name} 
+                      src={user.profile_image_url}
+                      alt={user.name || 'User'}
                       className="w-full h-full object-cover"
+                      onError={(e) => handleImageError(e, user.name)}
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white text-xs sm:text-sm font-semibold">
@@ -311,18 +326,19 @@ const Layout = () => {
 
             {/* Profile Dropdown Menu */}
             {showProfileDropdown && (
-              <div className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
+              <div className="absolute end-0 mt-2 w-72 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
                 <div className="px-4 py-3 border-b border-gray-100">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-200 flex-shrink-0">
+                    <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-200 flex-shrink-0 bg-gray-100">
                       {user?.profile_image_url ? (
                         <img 
-                          src={user.profile_image_url} 
-                          alt={user.name} 
+                          src={user.profile_image_url}
+                          alt={user.name || 'User'}
                           className="w-full h-full object-cover"
+                          onError={(e) => handleImageError(e, user.name)}
                         />
                       ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-blue-500 to-indigo-500 flex-items-center justify-center text-white text-xl font-bold">
+                        <div className="w-full h-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white text-xl font-bold">
                           {user?.name?.charAt(0)?.toUpperCase() || 'U'}
                         </div>
                       )}
@@ -411,7 +427,7 @@ const Layout = () => {
                 </li>
               ))}
 
-              {/* Reports Menu with Submenu - FIXED */}
+              {/* Reports Menu with Submenu */}
               <li>
                 <button
                   onClick={() => {
@@ -442,7 +458,7 @@ const Layout = () => {
                   )}
                 </button>
                 
-                {/* Submenu Items - FIXED */}
+                {/* Submenu Items */}
                 {(sidebarOpen || isMobile) && showReportsSubmenu && (
                   <ul className={`ml-4 mt-1 space-y-1 border-l-2 border-gray-200 pl-2 ${isRTL() ? 'border-r-2 border-l-0 mr-4 pr-2 ml-0' : ''}`}>
                     {reportItems.map((item) => (
